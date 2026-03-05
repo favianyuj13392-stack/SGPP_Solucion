@@ -1,0 +1,43 @@
+name: Deploy to IIS (Production)
+
+# Esto le dice a GitHub: "Ejecuta esto solo cuando yo haga un push a la rama 'main'"
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    # Esto es vital: Le dice a GitHub que NO use sus servidores en la nube,
+    # sino el servidor de tu universidad.
+    runs-on: self-hosted
+
+    steps:
+      - name: 📥 Descargar el código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: 📦 Compilar el proyecto (Build)
+        # Reemplaza 'SGPP.Web/SGPP.Web.csproj' con la ruta real de tu archivo de proyecto principal
+        run: dotnet build SGPP.Web/SGPP.Web.csproj --configuration Release
+
+      - name: 🚀 Generar binarios (Publish)
+        # Esto crea la carpeta lista para producción
+        run: dotnet publish SGPP.Web/SGPP.Web.csproj --configuration Release --output ./publish_output
+
+      - name: 🛑 Apagar la app en IIS (app_offline)
+        # Crea el archivo mágico que le dice a IIS que suelte los archivos y muestre "En mantenimiento"
+        # Reemplaza 'C:\inetpub\wwwroot\SGPP' con la ruta real en el servidor
+        run: echo "El sistema se esta actualizando. Volvemos en unos segundos..." > C:\inetpub\wwwroot\SGPP\app_offline.htm
+
+      - name: 📂 Copiar archivos al Servidor IIS
+        # Copia todo lo nuevo de publish_output a la carpeta del IIS y sobreescribe
+        run: Copy-Item -Path ./publish_output/* -Destination "C:\inetpub\wwwroot\SGPP" -Recurse -Force
+
+      - name: ✅ Encender la app en IIS
+        # Borra el archivo mágico y el IIS vuelve a la vida instantáneamente con el código nuevo
+        run: Remove-Item -Path C:\inetpub\wwwroot\SGPP\app_offline.htm

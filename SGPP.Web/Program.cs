@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SGPP.Infrastructure;
 using SGPP.Infrastructure.Persistence;
 using SGPP.Domain.Entities;
@@ -41,6 +42,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
+        
+        // Ejecuta las migraciones pendientes de forma automática y segura en Producción
+        await context.Database.MigrateAsync();
+
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         

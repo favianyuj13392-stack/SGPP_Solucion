@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SGPP.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+38e57b5297360f0ebfbb24c8f1dfd290dac49a23")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f16deaca73b3a36a2a0e43177c65d5360e978514")]
 [assembly: System.Reflection.AssemblyProductAttribute("SGPP.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SGPP.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
