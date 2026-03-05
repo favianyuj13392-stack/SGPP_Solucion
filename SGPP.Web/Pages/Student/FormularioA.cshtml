@@ -1,0 +1,311 @@
+@page
+@model SGPP.Web.Pages.Student.FormularioAModel
+@{
+    ViewData["Title"] = "Formulario A - Autoevaluación";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 style="color: #004070;">Formulario A: Autoevaluación del Estudiante</h2>
+        <a asp-page="./Dashboard" class="btn btn-outline-secondary">Volver al Dashboard</a>
+    </div>
+
+    @if (Model.Asignacion != null)
+    {
+        <form method="post">
+            <input type="hidden" name="AsignacionId" value="@Model.Asignacion.Id" />
+
+            <!-- Header Info -->
+            <div class="card mb-4 border-2" style="border-color: #004070;">
+                <div class="card-body p-0">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold bg-light" style="width: 20%;">Centro de Práctica:</td>
+                                <td colspan="3">@Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold bg-light">Tutor Institucional:</td>
+                                <td colspan="3">@Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre @Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold bg-light">Área asignada:</td>
+                                <td colspan="3">
+                                    <input asp-for="Input.AreaAsignada" class="form-control form-control-sm" placeholder="Ingrese el área asignada" required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold bg-light">Semestre:</td>
+                                <td>@Model.Asignacion.Periodo.CodigoGestion</td>
+                                <td class="fw-bold bg-light">Año:</td>
+                                <td>@DateTime.Now.Year</td>
+                                <td class="fw-bold bg-light">Horas trabajadas:</td>
+                                <td>
+                                    <input asp-for="Input.HorasTrabajadas" type="number" step="0.5" class="form-control form-control-sm" placeholder="0" required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold bg-light">Fecha Inicio:</td>
+                                <td>
+                                    <input asp-for="Input.FechaInicio" type="date" class="form-control form-control-sm" value="@Model.Asignacion.Periodo.FechaInicio.ToString("yyyy-MM-dd")" required />
+                                </td>
+                                <td class="fw-bold bg-light">Fecha Fin:</td>
+                                <td>
+                                    <input asp-for="Input.FechaFin" type="date" class="form-control form-control-sm" value="@Model.Asignacion.Periodo.FechaFin.ToString("yyyy-MM-dd")" required />
+                                </td>
+                                <td class="fw-bold bg-light">Fecha Evaluación:</td>
+                                <td>
+                                    <input asp-for="Input.FechaEvaluacion" type="date" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="alert alert-secondary">
+                <strong>Instrucciones:</strong> Valore cada ítem del 1 al 4, donde 1 es la calificación más baja y 4 la más alta.
+            </div>
+
+            <!-- Section 1: Centro de Práctica -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header text-white" style="background-color: #004070;">
+                    <h5 class="mb-0">I. SOBRE EL CENTRO DE PRÁCTICA</h5>
+                </div>
+                <div class="card-body">
+                    @for (int i = 1; i <= 9; i++)
+                    {
+                        <div class="row mb-3 border-bottom pb-3">
+                            <div class="col-md-4">
+                                <label class="fw-bold">@GetCentroQuestion(i)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex justify-content-between px-3">
+                                    @for (int v = 1; v <= 4; v++)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="CentroQuestions[@i].Value" value="@v" required id="c_@i-@v">
+                                            <label class="form-check-label" for="c_@i-@v">@v</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" name="CentroQuestions[@i].Justificacion" class="form-control form-control-sm" placeholder="Justificación (Opcional)" />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="CentroQuestions[@i].Observaciones" class="form-control form-control-sm" placeholder="Observaciones (Opcional)" />
+                            </div>
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Fortalezas detectadas en el Centro:</label>
+                        <textarea asp-for="Input.FortalezasCentro" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Limitaciones/Dificultades en el Centro:</label>
+                        <textarea asp-for="Input.LimitacionesCentro" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Recomendaciones para el Centro:</label>
+                        <textarea asp-for="Input.RecomendacionesCentro" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Tutor Institucional -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header text-white" style="background-color: #005080;">
+                    <h5 class="mb-0">II. SOBRE EL TUTOR INSTITUCIONAL (De la Empresa)</h5>
+                    <small>Nota: Esta sección tiene una ponderación doble.</small>
+                </div>
+                <div class="card-body">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <div class="row mb-3 border-bottom pb-3">
+                            <div class="col-md-4">
+                                <label class="fw-bold">@GetTutorInstQuestion(i)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex justify-content-between px-3">
+                                    @for (int v = 1; v <= 4; v++)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TutorInstQuestions[@i].Value" value="@v" required id="ti_@i-@v">
+                                            <label class="form-check-label" for="ti_@i-@v">@v</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                             <div class="col-md-2">
+                                <input type="text" name="TutorInstQuestions[@i].Justificacion" class="form-control form-control-sm" placeholder="Justificación" />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="TutorInstQuestions[@i].Observaciones" class="form-control form-control-sm" placeholder="Observaciones" />
+                            </div>
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Fortalezas del Tutor:</label>
+                        <textarea asp-for="Input.FortalezasTutor" class="form-control" rows="2"></textarea>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label fw-bold">Limitaciones/Dificultades con el Tutor:</label>
+                        <textarea asp-for="Input.LimitacionesTutor" class="form-control" rows="2"></textarea>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label fw-bold">Recomendaciones para el Tutor:</label>
+                        <textarea asp-for="Input.RecomendacionesTutor" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Tutor Academico -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header text-white" style="background-color: #006090;">
+                    <h5 class="mb-0">III. SOBRE EL TUTOR ACADÉMICO (Universidad)</h5>
+                </div>
+                <div class="card-body">
+                    @for (int i = 1; i <= 6; i++)
+                    {
+                        <div class="row mb-3 border-bottom pb-3">
+                            <div class="col-md-4">
+                                <label class="fw-bold">@GetTutorAcadQuestion(i)</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex justify-content-between px-3">
+                                    @for (int v = 1; v <= 4; v++)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="TutorAcadQuestions[@i].Value" value="@v" required id="ta_@i-@v">
+                                            <label class="form-check-label" for="ta_@i-@v">@v</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                             <div class="col-md-2">
+                                <input type="text" name="TutorAcadQuestions[@i].Justificacion" class="form-control form-control-sm" placeholder="Justificación" />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="TutorAcadQuestions[@i].Observaciones" class="form-control form-control-sm" placeholder="Observaciones" />
+                            </div>
+                        </div>
+                    }
+                 </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="card mb-4 shadow-sm border-2" style="border-color: #004070;">
+                <div class="card-header text-white" style="background-color: #004070;">
+                    <h5 class="mb-0 text-uppercase">Evaluación Final</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>EVALUACIÓN FINAL</th>
+                                <th class="text-end">TOTAL CALIFICACIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EVALUACIÓN 1: AL CENTRO DE PRÁCTICA</td>
+                                <td class="text-end fw-bold" id="score-centro">0</td>
+                            </tr>
+                            <tr>
+                                <td>EVALUACIÓN 2: AL TUTOR INSTITUCIONAL (Ponderado x2)</td>
+                                <td class="text-end fw-bold" id="score-institut">0</td>
+                            </tr>
+                            <tr>
+                                <td>EVALUACIÓN 3: AL TUTOR ACADÉMICO</td>
+                                <td class="text-end fw-bold" id="score-academic">0</td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td class="fw-bold text-end">TOTAL EVALUACIÓN</td>
+                                <td class="text-end fw-bold fs-5" id="score-total">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-5">
+                <button type="submit" class="btn btn-lg btn-success">Finalizar Autoevaluación</button>
+                <a asp-page="./Dashboard" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    }
+    else
+    {
+         <div class="alert alert-danger">No se encontró la asignación.</div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function calculateTotals() {
+                let centroRaw = 0;
+                let institutRaw = 0;
+                let academicRaw = 0;
+
+                // Centro: Sum 1..9
+                document.querySelectorAll('input[name^="CentroQuestions"][type="radio"]:checked').forEach(r => centroRaw += parseInt(r.value));
+                
+                // Tutor Inst: Sum 1..5 (* 2 according to logic)
+                document.querySelectorAll('input[name^="TutorInstQuestions"][type="radio"]:checked').forEach(r => institutRaw += parseInt(r.value));
+                const institutScore = institutRaw * 2;
+
+                // Tutor Acad: Sum 1..6
+                document.querySelectorAll('input[name^="TutorAcadQuestions"][type="radio"]:checked').forEach(r => academicRaw += parseInt(r.value));
+
+                // Totals
+                document.getElementById('score-centro').innerText = centroRaw;
+                document.getElementById('score-institut').innerText = institutScore;
+                document.getElementById('score-academic').innerText = academicRaw;
+                document.getElementById('score-total').innerText = centroRaw + institutScore + academicRaw;
+            }
+
+            // Bind
+             const allRadios = document.querySelectorAll('input[type="radio"]');
+             allRadios.forEach(el => el.addEventListener('change', calculateTotals));
+             calculateTotals();
+        });
+    </script>
+}
+
+@functions {
+    string GetCentroQuestion(int i) => i switch {
+        1 => "1. El centro de prácticas te proporcionó un espacio físico para desarrollar tus actividades.",
+        2 => "2. Contabas con equipo computacional y/o recursos tecnológicos adecuados para tu trabajo.",
+        3 => "3. El ambiente laboral fue positivo con relación al trato recibido por el supervisor (Tutor institucional).",
+        4 => "4. Las relaciones laborales con los compañeros de trabajo fueron agradables.",
+        5 => "5. La cultura organizacional del centro de práctica apoya el crecimiento de su personal.",
+        6 => "6. Las actividades que realizaste en el centro de práctica fueron relevantes para tu formación académica.",
+        7 => "7. El centro de práctica ofreció oportunidades adicionales para tu desarrollo profesional (capacitaciones, talleres, similares).",
+        8 => "8. El centro de práctica cumplió con tus expectativas iniciales.",
+        9 => "9. Se reconoce espacios de crecimiento profesional (puesto laboral) adicionales a las prácticas pre-profesionales.",
+        _ => "Item " + i
+    };
+
+    string GetTutorInstQuestion(int i) => i switch {
+        1 => "10. Recibiste la información necesaria para el desarrollo de las tareas asignadas.",
+        2 => "11. Recibiste un seguimiento adecuado por parte de tu supervisor (Tutor(a) institucional) en el centro de práctica.",
+        3 => "12. Se realizaron evaluaciones claras y secuenciales con relación a las tareas asignadas.",
+        4 => "13. Tuviste una retroalimentación clara y constructiva sobre el desempeño en el centro de práctica.",
+        5 => "14. Consideras que las tareas asignadas en el centro de práctica estuvieron relacionadas con tu carrera.",
+        _ => "Item " + i
+    };
+
+    string GetTutorAcadQuestion(int i) => i switch {
+        1 => "15. El profesor de la asignatura (Tutor(a) académico(a)) te ofreció posibles centros de práctica acordes a tus intereses profesionales.",
+        2 => "16. Consideras que la orientación del profesor de la asignatura (Tutor(a) académico(a)) te ayudó a encontrar una práctica adecuada.",
+        3 => "17.  El/la tutor(a) académico(a) daba explicaciones claras en las sesiones teóricas de la asignatura.",
+        4 => "18. Existen horarios accesibles para consultas con el/la tutor(a) académico(a).",
+        5 => "19. El/la Tutor(a) académico(a) apoyo a resolver dudas sobre las tareas asignadas en el centro de práctica.",
+        6 => "20. El/la tutor(a) académico(a) te proporcionó retroalimentación útil durante tu experiencia de práctica.",
+        _ => "Item " + i
+    };
+}

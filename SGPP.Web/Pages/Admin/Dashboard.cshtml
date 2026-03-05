@@ -1,0 +1,156 @@
+@page
+@model SGPP.Web.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<!-- Hero Section -->
+<div class="row mb-5 fade-in">
+    <div class="col-12">
+        <div class="p-5 rounded-3 shadow-sm text-white" style="background: linear-gradient(135deg, var(--ucb-dark-blue) 0%, var(--ucb-blue) 100%);">
+            <h1 class="display-4 fw-bold">Bienvenido, @User.Identity?.Name</h1>
+            <p class="lead">Sistema de Gestión de Prácticas Pre-Profesionales - Panel Administrativo</p>
+            <hr class="my-4 border-light opacity-50">
+            <p>Desde aquí puede gestionar periodos, usuarios y reportes estratégicos.</p>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Cards (Row 1) -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-ucb h-100 border-start border-4 border-warning">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold mb-1">Periodo Actual</h6>
+                    @if (Model.ActivePeriod != null)
+                    {
+                        <h2 class="mb-0 fw-bold text-ucb-blue">@Model.ActivePeriod.CodigoGestion</h2>
+                        <span class="badge bg-success mt-2">Activo</span>
+                    }
+                    else
+                    {
+                        <h2 class="mb-0 text-muted">Sin Periodo</h2>
+                    }
+                </div>
+                <div class="display-4 text-warning opacity-50">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card card-ucb h-100 border-start border-4 border-primary">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold mb-1">Gestión Académica</h6>
+                    <h2 class="mb-0 fw-bold text-ucb-blue">Consola</h2>
+                    <small class="text-muted">Supervisión Global</small>
+                </div>
+                <div class="display-4 text-primary opacity-50">
+                    <i class="fas fa-university"></i>
+                </div>
+            </div>
+            <a asp-page="/Academic/Dashboard" class="stretched-link"></a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-ucb h-100 border-start border-4 border-info">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold mb-1">Reportes</h6>
+                    <h2 class="mb-0 fw-bold text-info">Sostenibilidad</h2>
+                    <small class="text-muted">Análisis de Convenios</small>
+                </div>
+                <div class="display-4 text-info opacity-50">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+            <a asp-page="/Admin/Reports/Sustainability" class="stretched-link"></a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Grid -->
+<div class="row">
+    <div class="col-12 mb-3">
+        <h4 class="text-ucb-blue fw-bold"><i class="fas fa-th-large me-2"></i>Accesos Directos</h4>
+    </div>
+    
+    <!-- User Management -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-ucb h-100 text-center py-4">
+            <div class="card-body">
+                <div class="mb-3 text-secondary display-5">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h5 class="card-title fw-bold">Estudiantes</h5>
+                <p class="card-text small text-muted">Gestionar cuentas de alumnos</p>
+                <a asp-page="/Admin/Usuarios/Estudiantes/Index" class="btn btn-outline-secondary btn-sm stretched-link">Acceder</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card card-ucb h-100 text-center py-4">
+            <div class="card-body">
+                <div class="mb-3 text-dark display-5">
+                     <i class="fas fa-user-tie"></i>
+                </div>
+                <h5 class="card-title fw-bold">Tutores Empresa</h5>
+                <p class="card-text small text-muted">Gestionar tutores institucionales</p>
+                <a asp-page="/Admin/Usuarios/Tutores/Index" class="btn btn-outline-dark btn-sm stretched-link">Acceder</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card card-ucb h-100 text-center py-4">
+            <div class="card-body">
+                <div class="mb-3 text-info display-5">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h5 class="card-title fw-bold">Docentes</h5>
+                <p class="card-text small text-muted">Gestionar tutores académicos</p>
+                <a asp-page="/Admin/Docentes/Index" class="btn btn-outline-info btn-sm stretched-link">Acceder</a>
+            </div>
+        </div>
+    </div>
+    
+     <div class="col-md-3 mb-4">
+        <div class="card card-ucb h-100 text-center py-4">
+            <div class="card-body">
+                <div class="mb-3 text-primary display-5">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h5 class="card-title fw-bold">Empresas</h5>
+                <p class="card-text small text-muted">Gestionar convenios</p>
+                <a asp-page="/Admin/Empresas/Index" class="btn btn-outline-primary btn-sm stretched-link">Acceder</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Period Control Section -->
+@if (Model.ActivePeriod != null)
+{
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 bg-white">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-ucb-blue"><i class="fas fa-cog me-2"></i>Configuración Rápida: Periodo @Model.ActivePeriod.CodigoGestion</h5>
+                        <small class="text-muted">Use el interruptor para desactivar el periodo en caso de emergencia.</small>
+                    </div>
+                    <form method="post" asp-page-handler="TogglePeriod" asp-route-id="@Model.ActivePeriod.Id" class="d-flex align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="periodSwitch" checked onchange="this.form.submit()" style="transform: scale(1.3); cursor: pointer;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

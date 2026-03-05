@@ -1,0 +1,27 @@
+@model SGPP.Domain.Entities.FormularioB_Tareas
+@{
+    // Simple random ID to ensure unique name attributes if added client-side
+    // or we can rely on index if we manage it. 
+    // To support HTMX simplicity, we use a naming convention that binds to a List.
+    // Indexer strategy: we will replace {index} via JS on client side, OR use a Guid-based indexer.
+    // Simplifying: Let's use a Guid indexer for binding without sequential ints.
+    var index = Guid.NewGuid().ToString();
+}
+
+<tr id="row-@index">
+    <td>
+        <input name="Tareas.Index" value="@index" type="hidden" />
+        <textarea name="Tareas[@index].DescripcionTarea" class="form-control" rows="2" placeholder="Describa la tarea..." required></textarea>
+    </td>
+    <td>
+        <textarea name="Tareas[@index].AspectosPositivos" class="form-control" rows="2" placeholder="Logros..."></textarea>
+    </td>
+    <td>
+        <textarea name="Tareas[@index].AspectosMejorar" class="form-control" rows="2" placeholder="A mejorar..."></textarea>
+    </td>
+    <td class="align-middle text-center">
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="document.getElementById('row-@index').remove()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </td>
+</tr>

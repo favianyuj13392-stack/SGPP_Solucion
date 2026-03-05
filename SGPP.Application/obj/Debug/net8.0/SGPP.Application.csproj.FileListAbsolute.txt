@@ -1,0 +1,16 @@
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\bin\Debug\net8.0\SGPP.Application.deps.json
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\bin\Debug\net8.0\SGPP.Application.dll
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\bin\Debug\net8.0\SGPP.Application.pdb
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\bin\Debug\net8.0\SGPP.Domain.dll
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\bin\Debug\net8.0\SGPP.Domain.pdb
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.csproj.AssemblyReference.cache
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.AssemblyInfoInputs.cache
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.AssemblyInfo.cs
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.csproj.CoreCompileInputs.cache
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.App.9128E144.Up2Date
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.dll
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\refint\SGPP.Application.dll
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.pdb
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\ref\SGPP.Application.dll
+C:\DEV\USEI EVAL\SGPP_Solucion\SGPP.Application\obj\Debug\net8.0\SGPP.Application.sourcelink.json

@@ -1,0 +1,88 @@
+@page
+@model SGPP.Web.Pages.Admin.Periodos.EditModel
+@{
+    ViewData["Title"] = "Editar Periodo";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Editar Periodo</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-page="/Admin/Dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Periodos</a></li>
+        <li class="breadcrumb-item active">Editar</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i>
+            Datos del Periodo
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Periodo.Id" />
+                
+                <div class="mb-3">
+                    <label asp-for="Periodo.CodigoGestion" class="form-label">Nombre / Gestión</label>
+                    <input asp-for="Periodo.CodigoGestion" class="form-control" />
+                    <span asp-validation-for="Periodo.CodigoGestion" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Periodo.FechaInicio" class="form-label">Fecha Inicio Semestre</label>
+                        <input asp-for="Periodo.FechaInicio" type="date" class="form-control" min="2024-01-01" max="2030-12-31" />
+                        <span asp-validation-for="Periodo.FechaInicio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Periodo.FechaFin" class="form-label">Fecha Fin Semestre</label>
+                        <input asp-for="Periodo.FechaFin" type="date" class="form-control" min="2024-01-01" max="2030-12-31" />
+                        <span asp-validation-for="Periodo.FechaFin" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="card mb-3 border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-clock"></i> Ventana de Evaluación
+                    </div>
+                    <div class="card-body">
+                         <div class="row">
+                            <div class="col-md-6">
+                                <label asp-for="Periodo.FechaInicioEvaluacion" class="form-label">Inicio Evaluaciones</label>
+                                <input asp-for="Periodo.FechaInicioEvaluacion" type="date" class="form-control" min="2024-01-01" max="2030-12-31" />
+                                <span asp-validation-for="Periodo.FechaInicioEvaluacion" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Periodo.FechaFinEvaluacion" class="form-label">Fin Evaluaciones</label>
+                                <input asp-for="Periodo.FechaFinEvaluacion" type="date" class="form-control" min="2024-01-01" max="2030-12-31" />
+                                <span asp-validation-for="Periodo.FechaFinEvaluacion" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="mb-3 form-check">
+                    <input class="form-check-input" asp-for="Periodo.Activo" />
+                    <label class="form-check-label" asp-for="Periodo.Activo">
+                        Activo (Al guardar como activo, se desactivarán los demás)
+                    </label>
+                </div>
+                 <div class="mb-3 form-check">
+                    <input class="form-check-input" asp-for="Periodo.PermitirExtemporaneos" />
+                    <label class="form-check-label" asp-for="Periodo.PermitirExtemporaneos">
+                        Permitir Extemporáneos
+                    </label>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

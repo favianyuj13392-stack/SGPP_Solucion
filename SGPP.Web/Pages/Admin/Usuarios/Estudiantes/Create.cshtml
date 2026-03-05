@@ -1,0 +1,66 @@
+@page
+@using SGPP.Domain.Enums
+@model SGPP.Web.Pages.Admin.Usuarios.Estudiantes.CreateModel
+@{
+    ViewData["Title"] = "Crear Estudiante";
+}
+
+<div class="container mt-4">
+    <h2>Registrar Nuevo Estudiante</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <h5 class="text-secondary">Información de Usuario</h5>
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label">Correo Institucional</label>
+                    <input asp-for="Input.Email" class="form-control" type="email" placeholder="nombre.apellido@ucb.edu.bo" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label">Contraseña Inicial</label>
+                    <input asp-for="Input.Password" class="form-control" type="password" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.Nombre" class="form-label">Nombre</label>
+                        <input asp-for="Input.Nombre" class="form-control" />
+                        <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.Apellido" class="form-label">Apellido</label>
+                        <input asp-for="Input.Apellido" class="form-control" />
+                        <span asp-validation-for="Input.Apellido" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <h5 class="text-secondary mt-3">Información Académica</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.CodigoEstudiante" class="form-label">Código Estudiante</label>
+                        <input asp-for="Input.CodigoEstudiante" class="form-control" />
+                        <span asp-validation-for="Input.CodigoEstudiante" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Input.Carrera" class="form-label">Carrera</label>
+                        <select asp-for="Input.Carrera" class="form-select" asp-items="Html.GetEnumSelectList<Carrera>()"></select>
+                        <span asp-validation-for="Input.Carrera" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Crear Estudiante</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,133 @@
+@page
+@model SGPP.Web.Pages.Admin.Usuarios.ImportModel
+@{
+    ViewData["Title"] = "Importación Masiva de Usuarios";
+    var activeTab = Model.ActiveTab ?? "students";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="mb-4 text-primary"><i class="fas fa-file-upload"></i> Importación Masiva de Usuarios</h2>
+            
+            @if (Model.Result != null)
+            {
+                <div class="mb-5">
+                    <h4 class="mb-3">Resultados del Proceso</h4>
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4">
+                            <div class="card border-success text-success h-100">
+                                <div class="card-body">
+                                    <h3 class="display-4 fw-bold">@Model.Result.UsersCreated</h3>
+                                    <span>Usuarios Creados</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-info text-info h-100">
+                                <div class="card-body">
+                                    <h3 class="display-4 fw-bold">@Model.Result.CompaniesCreated</h3>
+                                    <span>Empresas Nuevas</span>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-md-4">
+                            <div class="card border-danger text-danger h-100">
+                                <div class="card-body">
+                                    <h3 class="display-4 fw-bold">@Model.Result.Errors.Count</h3>
+                                    <span>Errores</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Result.Errors.Any())
+                    {
+                        <div class="card border-danger shadow-sm">
+                            <div class="card-header bg-danger text-white">
+                                Detalle de Errores
+                            </div>
+                            <ul class="list-group list-group-flush max-h-200 overflow-auto">
+                                @foreach (var err in Model.Result.Errors)
+                                {
+                                    <li class="list-group-item text-danger"><i class="fas fa-times-circle me-2"></i> @err</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="importTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "students" ? "active" : "")" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab" aria-controls="students" aria-selected="true">Estudiantes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "teachers" ? "active" : "")" id="teachers-tab" data-bs-toggle="tab" data-bs-target="#teachers" type="button" role="tab" aria-controls="teachers" aria-selected="false">Docentes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(activeTab == "tutors" ? "active" : "")" id="tutors-tab" data-bs-toggle="tab" data-bs-target="#tutors" type="button" role="tab" aria-controls="tutors" aria-selected="false">Tutores (Empresas)</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="importTabsContent">
+                        
+                        <!-- TAB ESTUDIANTES -->
+                        <div class="tab-pane fade @(activeTab == "students" ? "show active" : "")" id="students" role="tabpanel" aria-labelledby="students-tab">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle"></i> Estructura Excel Estudiantes</h6>
+                                <p class="mb-0 small">Columnas requeridas (orden exacto): <strong>NOMBRE | APELLIDO | EMAIL | CODIGO | CARRERA | TELEFONO</strong></p>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" asp-page-handler="Students">
+                                <div class="mb-3">
+                                    <label class="form-label">Archivo de Estudiantes (.xlsx)</label>
+                                    <input type="file" asp-for="UploadFile" class="form-control" accept=".xlsx" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Importar Estudiantes</button>
+                            </form>
+                        </div>
+
+                        <!-- TAB DOCENTES -->
+                        <div class="tab-pane fade @(activeTab == "teachers" ? "show active" : "")" id="teachers" role="tabpanel" aria-labelledby="teachers-tab">
+                            <div class="alert alert-warning">
+                                <h6><i class="fas fa-info-circle"></i> Estructura Excel Docentes/Tutores Académicos</h6>
+                                <p class="mb-0 small">Columnas requeridas (orden exacto): <strong>NOMBRE | APELLIDO | EMAIL | TELEFONO | CARRERA</strong></p>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" asp-page-handler="Teachers">
+                                <div class="mb-3">
+                                    <label class="form-label">Archivo de Docentes (.xlsx)</label>
+                                    <input type="file" asp-for="UploadFile" class="form-control" accept=".xlsx" required />
+                                </div>
+                                <button type="submit" class="btn btn-warning text-dark"><i class="fas fa-upload"></i> Importar Docentes</button>
+                            </form>
+                        </div>
+
+                        <!-- TAB TUTORES -->
+                        <div class="tab-pane fade @(activeTab == "tutors" ? "show active" : "")" id="tutors" role="tabpanel" aria-labelledby="tutors-tab">
+                            <div class="alert alert-success">
+                                <h6><i class="fas fa-info-circle"></i> Estructura Excel Tutores Empresariales</h6>
+                                <p class="mb-0 small">Columnas requeridas (orden exacto): <strong>NOMBRE | APELLIDO | EMAIL | TELEFONO | EMPRESA | CARGO | AREA_TRABAJO</strong></p>
+                                <p class="mb-0 small text-muted fst-italic mt-1">* Si la empresa no existe, se creará automáticamente.</p>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" asp-page-handler="Tutors">
+                                <div class="mb-3">
+                                    <label class="form-label">Archivo de Tutores (.xlsx)</label>
+                                    <input type="file" asp-for="UploadFile" class="form-control" accept=".xlsx" required />
+                                </div>
+                                <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Importar Tutores</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 text-muted small">
+                <i class="fas fa-exclamation-triangle"></i> Nota: Todos los archivos deben comenzar los datos en la <strong>Fila 2</strong> (La Fila 1 se ignora como encabezado).
+            </div>
+        </div>
+    </div>
+</div>

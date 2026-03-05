@@ -1,0 +1,107 @@
+@page
+@model SGPP.Web.Pages.Admin.Reports.SustainabilityModel
+@{
+    ViewData["Title"] = "Dashboard de Sostenibilidad";
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h2 class="text-primary"><i class="fas fa-chart-line"></i> Dashboard de Sostenibilidad</h2>
+        <p class="text-muted">Análisis estratégico de convenios y distribución de estudiantes.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <form method="post" asp-page-handler="Export">
+            <button type="submit" class="btn btn-success shadow-sm">
+                <i class="fas fa-file-excel"></i> Descargar Reporte (.xlsx)
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Chart 1: Top Empresas -->
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3" style="background-color: #003366; color: white;">
+                <h6 class="m-0 fw-bold">Empresas con Mayor Captación (Top 10)</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="companiesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 2: Areas -->
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3" style="background-color: #003366; color: white;">
+                <h6 class="m-0 fw-bold">Distribución por Áreas de Trabajo</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="areasChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data passed from Model
+        const companyLabels = @Json.Serialize(Model.CompanyChart.Labels);
+        const companyValues = @Json.Serialize(Model.CompanyChart.Values);
+        const areaLabels = @Json.Serialize(Model.AreaChart.Labels);
+        const areaValues = @Json.Serialize(Model.AreaChart.Values);
+
+        // Chart 1: Companies (Horizontal Bar)
+        const ctxCompanies = document.getElementById('companiesChart').getContext('2d');
+        new Chart(ctxCompanies, {
+            type: 'bar',
+            data: {
+                labels: companyLabels,
+                datasets: [{
+                    label: 'Estudiantes Asignados',
+                    data: companyValues,
+                    backgroundColor: '#003366', // UCB Blue
+                    borderColor: '#002244',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Areas (Doughnut)
+        // Palette: UCB Yellow, UCB Blue, Red, Green, Purple, Orange, Cyan, Grey
+        const ucbPalette = ['#FFCC00', '#003366', '#E74C3C', '#2ECC71', '#9B59B6', '#E67E22', '#1ABC9C', '#95A5A6'];
+        
+        const ctxAreas = document.getElementById('areasChart').getContext('2d');
+        new Chart(ctxAreas, {
+            type: 'doughnut',
+            data: {
+                labels: areaLabels,
+                datasets: [{
+                    data: areaValues,
+                    backgroundColor: ucbPalette,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    </script>
+}

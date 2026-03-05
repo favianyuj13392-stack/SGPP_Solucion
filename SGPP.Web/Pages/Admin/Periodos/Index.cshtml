@@ -1,0 +1,74 @@
+@page
+@model SGPP.Web.Pages.Admin.Periodos.IndexModel
+@{
+    ViewData["Title"] = "Gestión de Periodos";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Gestión de Periodos</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-page="/Admin/Dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Periodos</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-calendar-alt me-1"></i>
+                Listado de Periodos Académicos
+            </div>
+            <a asp-page="Create" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Nuevo Periodo
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Gestión / Nombre</th>
+                        <th>Semestre (Inicio - Fin)</th>
+                        <th>Evaluación (Inicio - Fin)</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Periodos)
+                    {
+                        <tr class="@(item.Activo ? "table-success" : "")">
+                            <td class="fw-bold">@item.CodigoGestion</td>
+                            <td>@item.FechaInicio.ToShortDateString() - @item.FechaFin.ToShortDateString()</td>
+                            <td>
+                                @item.FechaInicioEvaluacion.ToShortDateString() - @item.FechaFinEvaluacion.ToShortDateString()
+                            </td>
+                            <td>
+                                @if (item.Activo)
+                                {
+                                    <span class="badge bg-success">ACTIVO</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
+                                @if (!item.Activo)
+                                {
+                                    <form method="post" asp-page-handler="SetActive" asp-route-id="@item.Id" class="d-inline" onsubmit="return confirm('¿Está seguro de activar este periodo? Se desactivarán los demás.');">
+                                        <button type="submit" class="btn btn-success btn-sm" title="Establecer como Activo">
+                                            <i class="fas fa-check-circle"></i> Activar
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

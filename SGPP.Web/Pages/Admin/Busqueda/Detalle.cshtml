@@ -1,0 +1,91 @@
+@page
+@model SGPP.Web.Pages.Admin.Busqueda.DetalleModel
+@{
+    ViewData["Title"] = "Historial de Evaluaciones";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Historial de Evaluaciones</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-page="/Admin/Dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Búsqueda</a></li>
+        <li class="breadcrumb-item active">Detalle</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user-circle me-2"></i> @Model.PersonName
+            </h5>
+            <small class="text-white-50">@Model.PersonRole</small>
+        </div>
+        <div class="card-body">
+            @if (Model.History.Any())
+            {
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Periodo</th>
+                            <th>Tipo Formulario</th>
+                            <th>Evaluado / Contexto</th>
+                            <th>Fecha Llenado</th>
+                            <th>Nota</th>
+                            <th>Descargar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.History)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Periodo</td>
+                                <td>
+                                    <span class="badge @(item.FormType == "Formulario A" ? "bg-info text-dark" : "bg-warning text-dark")">
+                                        @item.FormType
+                                    </span>
+                                </td>
+                                <td>@item.Subject</td>
+                                <td>
+                                    @if (item.IsCompleted)
+                                    {
+                                        <span>@item.FechaLlenado?.ToString("dd/MM/yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Pendiente</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if(item.Score.HasValue)
+                                    {
+                                        <span class="fw-bold">@item.Score / 100</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsCompleted)
+                                    {
+                                        <a asp-page-handler="Download" asp-route-id="@item.AsignacionId" asp-route-type="@item.FormType" class="btn btn-sm btn-success">
+                                            <i class="fas fa-file-excel"></i> Excel
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    Este usuario no ha registrado ninguna evaluación hasta la fecha.
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <a asp-page="./Index" class="btn btn-secondary">Volver a Búsqueda</a>
+        </div>
+    </div>
+</div>

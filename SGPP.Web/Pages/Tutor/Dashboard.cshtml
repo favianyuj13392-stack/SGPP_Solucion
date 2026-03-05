@@ -1,0 +1,80 @@
+@page
+@model SGPP.Web.Pages.Tutor.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard Tutor";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-warning" style="background-color: #F5C002; color: #004070;">
+        <h4 class="alert-heading">Bienvenido, @User.Identity?.Name</h4>
+        <p class="mb-0">Gestione las evaluaciones de sus pasantes aquí.</p>
+    </div>
+
+    <h4 class="mt-4 mb-3" style="color: #004070;">Mis Estudiantes Asignados</h4>
+    
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead style="background-color: #004070; color: white;">
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Carrera</th>
+                            <th>Periodo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Asignaciones.Any())
+                        {
+                            foreach (var item in Model.Asignaciones)
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        <div class="fw-bold">@item.Estudiante.ApplicationUser.Apellido @item.Estudiante.ApplicationUser.Nombre</div>
+                                        <small class="text-muted">@item.Estudiante.CodigoEstudiante</small>
+                                    </td>
+                                    <td class="align-middle">@item.Estudiante.Carrera</td>
+                                    <td class="align-middle">@item.Periodo.CodigoGestion</td>
+                                    <td class="align-middle">
+                                        <span class="badge @(item.Estado == SGPP.Domain.Enums.EstadoAsignacion.Completado ? "bg-success" : "bg-warning text-dark")">
+                                            @item.Estado
+                                        </span>
+                                    </td>
+                                    <td class="align-middle">
+                                        @if (item.Estado != SGPP.Domain.Enums.EstadoAsignacion.Completado && item.Estado != SGPP.Domain.Enums.EstadoAsignacion.NoHabilitado)
+                                        {
+                                            @if (item.Periodo.IsEvaluationOpen || item.Periodo.PermitirExtemporaneos)
+                                            {
+                                                <a asp-page="./FormularioB" asp-route-asignacionId="@item.Id" class="btn btn-sm btn-primary">
+                                                    Evaluar
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-secondary" disabled title="Desde: @item.Periodo.FechaInicioEvaluacion.ToShortDateString() Hasta: @item.Periodo.FechaFinEvaluacion.ToShortDateString()">
+                                                    Fuera de Fecha
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-secondary" disabled>Cerrado</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">No tiene estudiantes asignados para evaluar.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

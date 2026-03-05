@@ -1,0 +1,102 @@
+@page
+@model SGPP.Web.Pages.Student.VincularModel
+@{
+    ViewData["Title"] = "Vincular Práctica";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-0 text-white">Registro de Práctica Profesional</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Seleccione la empresa y el tutor institucional con el que realizará su práctica para vincularse al periodo actual.
+                    </div>
+
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">1. Centro de Práctica (Empresa)</label>
+                            <select id="centroSelect" asp-for="SelectedCentroId" class="form-select form-select-lg" required>
+                                <option value="">-- Seleccione una Empresa --</option>
+                                @foreach (var centro in Model.Centros)
+                                {
+                                    <option value="@centro.Id">@centro.RazonSocial</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">2. Tutor Institucional (Supervisor)</label>
+                            <select id="tutorSelect" asp-for="SelectedTutorId" class="form-select form-select-lg" required disabled>
+                                <option value="">-- Primero seleccione una Empresa --</option>
+                            </select>
+                            <div class="form-text mt-2">
+                                ¿No encuentra a su tutor? Contacte al administrador para registrarlo.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">3. Tutor Académico (Docente)</label>
+                            <select asp-for="SelectedTutorAcademicoId" class="form-select form-select-lg" required>
+                                <option value="">-- Seleccione su Docente Guía --</option>
+                                @foreach (var doc in Model.TutoresAcademicos)
+                                {
+                                    <option value="@doc.Id">@doc.Nombre @doc.Apellido</option>
+                                }
+                            </select>
+                            <div class="form-text mt-2">
+                                Seleccione al docente de la materia en el periodo actual.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-link-45deg"></i> Registrar Vinculación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('centroSelect').addEventListener('change', function() {
+            var centroId = this.value;
+            var tutorSelect = document.getElementById('tutorSelect');
+            
+            tutorSelect.innerHTML = '<option value="">Cargando...</option>';
+            tutorSelect.disabled = true;
+
+            if (centroId) {
+                fetch(`?handler=Tutores&centroId=${centroId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        tutorSelect.innerHTML = '<option value="">-- Seleccione un Tutor --</option>';
+                        data.forEach(item => {
+                            var option = document.createElement('option');
+                            option.value = item.id;
+                            option.text = item.nombre;
+                            tutorSelect.appendChild(option);
+                        });
+                        tutorSelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        tutorSelect.innerHTML = '<option value="">Error al cargar tutores</option>';
+                    });
+            } else {
+                tutorSelect.innerHTML = '<option value="">-- Primero seleccione una Empresa --</option>';
+                tutorSelect.disabled = true;
+            }
+        });
+    </script>
+}

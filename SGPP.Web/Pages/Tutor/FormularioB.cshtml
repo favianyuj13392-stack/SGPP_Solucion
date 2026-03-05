@@ -1,0 +1,305 @@
+@page
+@model SGPP.Web.Pages.Tutor.FormularioBModel
+@{
+    ViewData["Title"] = "Formulario B - Evaluación Empresa";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4" style="color: #004070;">Formulario B: Evaluación de la Empresa</h2>
+    
+    @if (Model.Asignacion != null)
+    {
+        <div class="card mb-4 border-2" style="border-color: #004070;">
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="bg-light fw-bold text-uppercase" style="color: #004070;">Profesional en formación: @Model.Asignacion.Estudiante.ApplicationUser.Nombre @Model.Asignacion.Estudiante.ApplicationUser.Apellido</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold" style="width: 25%;">Tutor(a) Académico(a)</td>
+                            <td style="width: 25%;">No Asignado</td>
+                            <td class="fw-bold" style="width: 25%;">Departamento:</td>
+                            <td style="width: 25%;">@(Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial /* Usamos RazonSocial como proxy departamento o vacio */)</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tutor(a) Institucional:</td>
+                            <td>@Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre @Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido</td>
+                            <td class="fw-bold">Centro de Práctica:</td>
+                            <td>@Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Semestre:</td>
+                            <td>@Model.Asignacion.Periodo.CodigoGestion</td>
+                            <td class="fw-bold">Año:</td>
+                            <td>@DateTime.Now.Year</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Fecha Inicio:</td>
+                            <td>
+                                <input asp-for="Input.FechaInicioPractica" type="date" class="form-control" value="@Model.Asignacion.Periodo.FechaInicio.ToString("yyyy-MM-dd")" />
+                            </td>
+                            <td class="fw-bold">Fecha Fin:</td>
+                            <td>
+                                <input asp-for="Input.FechaFinPractica" type="date" class="form-control" value="@Model.Asignacion.Periodo.FechaFin.ToString("yyyy-MM-dd")" />
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="fw-bold">Fecha Evaluación:</td>
+                            <td>
+                                <input asp-for="Input.FechaEvaluacion" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            </td>
+                            <td class="fw-bold">Horas Trabajadas:</td>
+                            <td>(Ingrese abajo)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <form method="post">
+            <input type="hidden" asp-for="AsignacionId" />
+            
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title text-secondary">Registro de Horas</h4>
+                    <hr />
+                    <div class="form-group row align-items-center">
+                        <label asp-for="Input.HorasTrabajadas" class="col-sm-4 col-form-label fw-bold">Total Horas Trabajadas en el Semestre</label>
+                        <div class="col-sm-4">
+                            <input asp-for="Input.HorasTrabajadas" type="number" step="0.5" class="form-control form-control-lg" required />
+                            <span asp-validation-for="Input.HorasTrabajadas" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-info text-white" style="background-color: #004070 !important;">
+                    <h5 class="mb-0">Evaluación de Conocimientos Técnicos</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Califique del 1 (Muy Insatisfecho) al 4 (Muy Satisfecho).</p>
+                    
+                    @for (int i = 0; i < Model.TechQuestions.Count; i++)
+                    {
+                        var questionId = Model.TechQuestions[i].QuestionId;
+                        <div class="mb-3 border-bottom pb-2">
+                             <input type="hidden" asp-for="TechQuestions[i].QuestionId" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">@GetTechnicalQuestion(questionId)</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between">
+                                        @foreach (var val in new[] { 1, 2, 3, 4 })
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" asp-for="TechQuestions[i].Value" value="@val" required>
+                                                <label class="form-check-label">@val</label>
+                                            </div>
+                                        }
+                                    </div>
+                                    <input type="text" asp-for="TechQuestions[i].Justificacion" class="form-control mt-2" placeholder="Justificación (Opcional)" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-warning text-dark" style="background-color: #F5C002 !important;">
+                    <h5 class="mb-0">Evaluación de Power Skills</h5>
+                </div>
+                <div class="card-body">
+                     <p class="text-muted">Califique del 1 (Muy Insatisfecho) al 4 (Muy Satisfecho).</p>
+                    @for (int i = 0; i < Model.PowerQuestions.Count; i++)
+                    {
+                        var questionId = Model.PowerQuestions[i].QuestionId;
+                        <div class="mb-3 border-bottom pb-2">
+                            <input type="hidden" asp-for="PowerQuestions[i].QuestionId" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">@GetPowerSkillQuestion(questionId)</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between">
+                                        @foreach (var val in new[] { 1, 2, 3, 4 })
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" asp-for="PowerQuestions[i].Value" value="@val" required>
+                                                <label class="form-check-label">@val</label>
+                                            </div>
+                                        }
+                                    </div>
+                                     <input type="text" asp-for="PowerQuestions[i].Justificacion" class="form-control mt-2" placeholder="Justificación (Opcional)" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+             <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title text-secondary">Aspectos Generales</h4>
+                    <hr />
+                    <div class="mb-3">
+                        <label asp-for="Input.FortalezasTexto" class="form-label fw-bold">Principales FORTALEZAS Profesional en formación</label>
+                        <textarea asp-for="Input.FortalezasTexto" class="form-control" rows="3"></textarea>
+                    </div>
+                     <div class="mb-3">
+                        <label asp-for="Input.AreasMejoraTexto" class="form-label fw-bold">Áreas a FORTALECER del Profesional en formación</label>
+                        <textarea asp-for="Input.AreasMejoraTexto" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Tareas Realizadas</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered" id="tareasTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%">Descripción</th>
+                                <th style="width: 25%">Aspectos Positivos</th>
+                                <th style="width: 25%">Aspectos a Mejorar</th>
+                                <th style="width: 10%">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tareasContainer">
+                            <!-- HTMX renders rows here -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <!-- Simple HTMX GET to fetch partial -->
+                                    <button type="button" class="btn btn-outline-primary"
+                                            hx-get="@Url.Page("FormularioB", "RowTemplate")"
+                                            hx-target="#tareasContainer"
+                                            hx-swap="beforeend">
+                                        + Agregar Tarea
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="card mb-4 shadow-sm border-2" style="border-color: #004070;">
+                <div class="card-header text-white" style="background-color: #004070;">
+                    <h5 class="mb-0 text-uppercase">Evaluación Final</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>EVALUACIÓN FINAL</th>
+                                <th class="text-end">TOTAL CALIFICACIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EVALUACIÓN 1: Conocimientos técnicos</td>
+                                <td class="text-end fw-bold" id="score-tech">0</td>
+                            </tr>
+                            <tr>
+                                <td>EVALUACIÓN 2: Power Skills</td>
+                                <td class="text-end fw-bold" id="score-power">0</td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td class="fw-bold text-end">TOTAL EVALUACIÓN</td>
+                                <td class="text-end fw-bold fs-5" id="score-total">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-5">
+                <button type="submit" class="btn btn-lg btn-success">Finalizar Evaluación</button>
+                <a asp-page="./Dashboard" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    }
+    else
+    {
+         <div class="alert alert-danger">No se encontró la asignación o no tiene permisos.</div>
+    }
+</div>
+
+@functions {
+    string GetTechnicalQuestion(int i) => i switch {
+        1 => "1. El practicante posee los conocimientos técnicos necesarios para las tareas asignadas.",
+        2 => "2. Aplica correctamente los conocimientos teóricos en la práctica",
+        3 => "3. Tiene capacidad para identificar y resolver problemas técnicos",
+        4 => "4. Demuestra habilidades en el uso de herramientas o software especializado",
+        5 => "5. Se adapta a nuevos procesos o metodologías en el área de trabajo",
+        6 => "6. Entrega sus trabajos con calidad y precisión",
+        7 => "7. Muestra iniciativa en la búsqueda de soluciones técnicas",
+        8 => "8. Sigue adecuadamente los protocolos y normativas de la institución",
+        _ => "Pregunta Técnica " + i
+    };
+    
+    string GetPowerSkillQuestion(int i) => i switch {
+        9 => "1. El practicante se comunica de manera clara y efectiva con sus compañeros y superiores.",
+        10 => "2. Trabaja bien en equipo y contribuye a un ambiente colaborativo.",
+        11 => "3. Maneja adecuadamente la presión y se adapta a cambios.",
+        12 => "4. Muestra una actitud proactiva en el desarrollo de sus funciones.",
+        13 => "5. Es puntual y cumple con los plazos establecidos",
+        14 => "6. Es organizado con las tareas asignadas y productos entregados.",
+        15 => "7. Acepta y aplica retroalimentación de manera positiva.",
+        16 => "8. Demuestra compromiso con las tareas asignadas.",
+        17 => "9. Tiene iniciativa para proponer mejoras en el trabajo",
+        _ => " " + i
+    };
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calculator Logic
+            const techRadios = document.querySelectorAll('input[name^="TechQuestions"][type="radio"]');
+            const powerRadios = document.querySelectorAll('input[name^="PowerQuestions"][type="radio"]');
+            
+            function calculateTotals() {
+                let techRaw = 0;
+                let powerRaw = 0;
+                
+                // Tech Calculation
+                // Assuming unique groups per question. We iterate over checked only.
+                const techChecked = document.querySelectorAll('input[name^="TechQuestions"][type="radio"]:checked');
+                techChecked.forEach(r => techRaw += parseInt(r.value));
+                
+                const techScore = techRaw * 2; // Golden Rule: x2
+                
+                // Power Calculation
+                const powerChecked = document.querySelectorAll('input[name^="PowerQuestions"][type="radio"]:checked');
+                powerChecked.forEach(r => powerRaw += parseInt(r.value));
+                
+                const powerScore = powerRaw; // Golden Rule: x1
+                
+                // Update UI
+                document.getElementById('score-tech').innerText = techScore;
+                document.getElementById('score-power').innerText = powerScore;
+                document.getElementById('score-total').innerText = techScore + powerScore;
+            }
+            
+            // Bind events
+            // We use 'change' on the container or individual radios
+            [...techRadios, ...powerRadios].forEach(el => {
+                el.addEventListener('change', calculateTotals);
+            });
+            
+            // Initial calc
+            calculateTotals();
+        });
+    </script>
+}

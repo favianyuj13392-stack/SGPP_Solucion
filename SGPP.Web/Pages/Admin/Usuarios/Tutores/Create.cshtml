@@ -1,0 +1,79 @@
+@page
+@model SGPP.Web.Pages.Admin.Usuarios.Tutores.CreateModel
+@{
+    ViewData["Title"] = "Crear Tutor";
+}
+
+<div class="container mt-4">
+    <h2>Registrar Nuevo Tutor (Empresa)</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <h5 class="text-secondary">Información de Usuario</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.Email" class="form-label">Email (Usuario)</label>
+                        <input asp-for="Input.Email" class="form-control" type="email" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                        <input asp-for="Input.Password" class="form-control" type="password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.Nombre" class="form-label">Nombre</label>
+                        <input asp-for="Input.Nombre" class="form-control" />
+                        <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.Apellido" class="form-label">Apellido</label>
+                        <input asp-for="Input.Apellido" class="form-control" />
+                        <span asp-validation-for="Input.Apellido" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <h5 class="text-secondary mt-3">Información Laboral</h5>
+                <div class="mb-3">
+                    <label asp-for="Input.CentroPracticaId" class="form-label">Empresa / Centro de Práctica</label>
+                    <select asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica">
+                        <option value="">-- Seleccione una Empresa --</option>
+                    </select>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="Input.Ci" class="form-label">Carnet Identidad (CI)</label>
+                        <input asp-for="Input.Ci" class="form-control" />
+                        <span asp-validation-for="Input.Ci" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                         <label asp-for="Input.Cargo" class="form-label">Cargo</label>
+                        <input asp-for="Input.Cargo" class="form-control" />
+                         <span asp-validation-for="Input.Cargo" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Input.Telefono" class="form-label">Teléfono</label>
+                        <input asp-for="Input.Telefono" class="form-control" />
+                         <span asp-validation-for="Input.Telefono" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Crear Tutor</button>
+                    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

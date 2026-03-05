@@ -1,0 +1,106 @@
+@page "{id:int}"
+@model SGPP.Web.Pages.Admin.Usuarios.Tutores.EditModel
+@{
+    ViewData["Title"] = "Editar Tutor";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Editar Tutor (Empresa)</h2>
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success m-0 p-2">@TempData["Message"]</div>
+        }
+    </div>
+    <hr />
+
+    <div class="row">
+        <!-- Main Form -->
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-white">Datos Principales</div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="TutorId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <input asp-for="Input.Email" class="form-control" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Input.Nombre" class="form-label">Nombre</label>
+                                <input asp-for="Input.Nombre" class="form-control" />
+                                <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Input.Apellido" class="form-label">Apellido</label>
+                                <input asp-for="Input.Apellido" class="form-control" />
+                                <span asp-validation-for="Input.Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.CentroPracticaId" class="form-label">Empresa</label>
+                            <select asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica"></select>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="Input.Ci" class="form-label">CI</label>
+                                <input asp-for="Input.Ci" class="form-control" />
+                                <span asp-validation-for="Input.Ci" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.Cargo" class="form-label">Cargo</label>
+                                <input asp-for="Input.Cargo" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.Telefono" class="form-label">Teléfono</label>
+                                <input asp-for="Input.Telefono" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" asp-for="Input.EsActivo" />
+                            <label class="form-check-label" asp-for="Input.EsActivo">Usuario Activo</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Password Side Panel -->
+        <div class="col-md-5">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">Seguridad</div>
+                <div class="card-body">
+                    <h5 class="card-title">Restablecer Contraseña</h5>
+                    <p class="card-text text-muted small">Esto cambiará inmediatamente la contraseña del usuario.</p>
+                    
+                    <form method="post" asp-page-handler="ResetPassword">
+                         <input type="hidden" asp-for="TutorId" />
+                        <div class="mb-3">
+                            <label asp-for="NewPassword" class="form-label">Nueva Contraseña</label>
+                            <input asp-for="NewPassword" class="form-control" type="password" placeholder="Mínimo 6 caracteres" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-key"></i> Actualizar Contraseña
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,122 @@
+@page
+@model SGPP.Web.Pages.Academic.DashboardModel
+@{
+    ViewData["Title"] = "Panel Académico - Consolidación de Notas";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Panel Académico</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Consolidación de Evaluaciones de Prácticas</li>
+    </ol>
+    
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <i class="bi bi-journal-check me-1"></i>
+            Resumen de Estudiantes Asignados
+        </div>
+        <div class="card-body">
+            @if(Model.ResumenEstudiantes.Count == 0)
+            {
+                <div class="alert alert-info text-center">
+                    No tiene estudiantes asignados en este periodo (o no existen registros aún).
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr class="text-center align-middle">
+                                <th>Estudiante</th>
+                                <th>Empresa / Centro</th>
+                                <th>Tutor Inst.</th>
+                                <th>Estado</th>
+                                <th class="table-primary">Nota F-A<br><small>(Autoevaluación)</small></th>
+                                <th class="table-info">Nota F-B<br><small>(Tutor Inst)</small></th>
+                                <th class="table-success fw-bold">NOTA FINAL<br><small>(Tutor Inst)</small></th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ResumenEstudiantes)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.EstudianteNombre</td>
+                                    <td>@item.EmpresaNombre</td>
+                                    <td>@item.TutorInstNombre</td>
+                                    <td>
+                                        @if(item.Estado == "Completado")
+                                        {
+                                            <span class="badge bg-success">Completado</span>
+                                        }
+                                        else if(item.Estado == "Pendiente")
+                                        {
+                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@item.Estado</span>
+                                        }
+                                    </td>
+                                    
+                                    <!-- Notas -->
+                                    <td class="text-center">
+                                        @if(item.NotaFormA.HasValue)
+                                        {
+                                            <span class="fs-5">@item.NotaFormA</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">--</span>
+                                        }
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        @if(item.NotaFormB.HasValue)
+                                        {
+                                            <span class="fs-5">@item.NotaFormB</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">--</span>
+                                        }
+                                    </td>
+                                    
+                                    <td class="text-center bg-light fw-bold">
+                                        @if(item.PromedioFinal.HasValue)
+                                        {
+                                            <span class="fs-4 @(item.PromedioFinal >= 51 ? "text-success" : "text-danger")">
+                                                @item.PromedioFinal
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Pendiente</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            @if(item.NotaFormA.HasValue)
+                                            {
+                                                <a class="btn btn-outline-primary" asp-page-handler="ExportFormA" asp-route-id="@item.AsignacionId" title="Descargar Form A">
+                                                    <i class="bi bi-file-earmark-spreadsheet"></i> A
+                                                </a>
+                                            }
+                                            @if(item.NotaFormB.HasValue)
+                                            {
+                                                <a class="btn btn-outline-success" asp-page-handler="ExportFormB" asp-route-id="@item.AsignacionId" title="Descargar Form B">
+                                                    <i class="bi bi-file-earmark-excel"></i> B
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

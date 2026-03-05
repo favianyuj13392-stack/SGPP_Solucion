@@ -1,0 +1,43 @@
+@page
+@model SGPP.Web.Pages.Admin.Empresas.DeleteModel
+@{
+    ViewData["Title"] = "Eliminar Empresa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Eliminar Empresa</h4>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> @Model.ErrorMessage
+                    </div>
+                }
+
+                <p class="lead">¿Está seguro que desea eliminar esta empresa?</p>
+                <dl class="row">
+                    <dt class="col-sm-4">Razón Social</dt>
+                    <dd class="col-sm-8">@Model.CentroPractica.RazonSocial</dd>
+
+                    <dt class="col-sm-4">NIT</dt>
+                    <dd class="col-sm-8">@Model.CentroPractica.Nit</dd>
+                    
+                    <dt class="col-sm-4">Dirección</dt>
+                    <dd class="col-sm-8">@Model.CentroPractica.Direccion</dd>
+                </dl>
+
+                <form method="post">
+                    <input type="hidden" asp-for="CentroPractica.Id" />
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-page="Index" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-danger" @(string.IsNullOrEmpty(Model.ErrorMessage) ? "" : "disabled")>Confirmar Eliminación</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

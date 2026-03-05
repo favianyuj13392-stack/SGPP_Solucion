@@ -1,0 +1,59 @@
+@page
+@model SGPP.Web.Pages.Admin.Empresas.EditModel
+@{
+    ViewData["Title"] = "Editar Empresa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Editar Empresa</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="CentroPractica.Id" />
+                    <input type="hidden" asp-for="CentroPractica.FechaCreacion" />
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.RazonSocial" class="form-label">Razón Social</label>
+                        <input asp-for="CentroPractica.RazonSocial" class="form-control" />
+                        <span asp-validation-for="CentroPractica.RazonSocial" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CentroPractica.Nit" class="form-label">NIT</label>
+                            <input asp-for="CentroPractica.Nit" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CentroPractica.Rubro" class="form-label">Rubro</label>
+                            <input asp-for="CentroPractica.Rubro" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.Direccion" class="form-label">Dirección</label>
+                        <input asp-for="CentroPractica.Direccion" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.EstadoConvenio" class="form-label">Estado Convenio</label>
+                        <select asp-for="CentroPractica.EstadoConvenio" class="form-select" asp-items="Html.GetEnumSelectList<SGPP.Domain.Enums.EstadoConvenio>()"></select>
+                         <span asp-validation-for="CentroPractica.EstadoConvenio" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-page="Index" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

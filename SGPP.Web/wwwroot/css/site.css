@@ -1,0 +1,137 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap");
+
+:root {
+  --ucb-blue: #003366;
+  --ucb-yellow: #ffcc00;
+  --ucb-dark-blue: #002244;
+  --ucb-gray-bg: #f4f6f9;
+}
+
+html {
+  font-size: 14px;
+  position: relative;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: var(--ucb-gray-bg);
+  color: #333;
+  margin-bottom: 60px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand {
+  font-family: "Merriweather", serif;
+}
+
+/* Navbar UCB */
+.bg-ucb-blue {
+  background-color: var(--ucb-blue) !important;
+}
+
+.navbar-ucb {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.navbar-ucb .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-ucb .nav-link:hover,
+.navbar-ucb .nav-link.active {
+  color: var(--ucb-yellow) !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: white !important;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+  font-weight: 600;
+  font-family: "Merriweather", serif;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--ucb-blue);
+  border-color: var(--ucb-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--ucb-dark-blue);
+  border-color: var(--ucb-dark-blue);
+}
+
+.btn-warning {
+  background-color: var(--ucb-yellow);
+  border-color: var(--ucb-yellow);
+  color: var(--ucb-blue);
+  font-weight: 600;
+}
+
+/* Tables */
+.table-container {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Utils */
+.text-ucb-blue {
+  color: var(--ucb-blue) !important;
+}
+.text-ucb-yellow {
+  color: var(--ucb-yellow) !important;
+}
+.bg-ucb-yellow {
+  background-color: var(--ucb-yellow) !important;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  background-color: var(--ucb-dark-blue);
+  color: white;
+}
+
+.footer a {
+  color: var(--ucb-yellow);
+  text-decoration: none;
+}

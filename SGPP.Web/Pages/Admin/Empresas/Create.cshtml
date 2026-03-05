@@ -1,0 +1,57 @@
+@page
+@model SGPP.Web.Pages.Admin.Empresas.CreateModel
+@{
+    ViewData["Title"] = "Crear Empresa";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Registrar Nueva Empresa</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.RazonSocial" class="form-label">Razón Social</label>
+                        <input asp-for="CentroPractica.RazonSocial" class="form-control" />
+                        <span asp-validation-for="CentroPractica.RazonSocial" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CentroPractica.Nit" class="form-label">NIT (Opcional)</label>
+                            <input asp-for="CentroPractica.Nit" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CentroPractica.Rubro" class="form-label">Rubro (Opcional)</label>
+                            <input asp-for="CentroPractica.Rubro" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.Direccion" class="form-label">Dirección (Opcional)</label>
+                        <input asp-for="CentroPractica.Direccion" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CentroPractica.EstadoConvenio" class="form-label">Estado Convenio</label>
+                        <select asp-for="CentroPractica.EstadoConvenio" class="form-select" asp-items="Html.GetEnumSelectList<SGPP.Domain.Enums.EstadoConvenio>()"></select>
+                         <span asp-validation-for="CentroPractica.EstadoConvenio" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-page="Index" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

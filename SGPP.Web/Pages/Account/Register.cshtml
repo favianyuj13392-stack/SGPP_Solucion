@@ -1,0 +1,94 @@
+@page
+@model SGPP.Web.Pages.Account.RegisterModel
+@using SGPP.Domain.Enums
+@{
+    ViewData["Title"] = "Registro de Estudiante";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header text-center" style="background-color: #004070; color: #FFFFFF;">
+                    <img src="~/img/ucb_logo.png" alt="UCB Logo" height="80" class="my-3">
+                    <h3 class="font-weight-light mb-2">Registro Estudiante UCB</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input asp-for="Input.Nombre" class="form-control" placeholder="Nombre" />
+                                    <label asp-for="Input.Nombre">Nombre</label>
+                                    <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="Input.Apellido" class="form-control" placeholder="Apellido" />
+                                    <label asp-for="Input.Apellido">Apellido</label>
+                                    <span asp-validation-for="Input.Apellido" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" placeholder="name@ucb.edu.bo" />
+                            <label asp-for="Input.Email">Correo Institucional (@@ucb.edu.bo)</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input asp-for="Input.CodigoEstudiante" class="form-control" placeholder="Código" />
+                                    <label asp-for="Input.CodigoEstudiante">Código Estudiante</label>
+                                    <span asp-validation-for="Input.CodigoEstudiante" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="Input.Carrera" class="form-select" asp-items="Html.GetEnumSelectList<Carrera>()">
+                                        <option value="">-- Seleccionar --</option>
+                                    </select>
+                                    <label asp-for="Input.Carrera">Carrera</label>
+                                    <span asp-validation-for="Input.Carrera" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input asp-for="Input.Password" class="form-control" type="password" placeholder="Contraseña" />
+                                    <label asp-for="Input.Password">Contraseña</label>
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input asp-for="Input.ConfirmPassword" class="form-control" type="password" placeholder="Confirmar" />
+                                    <label asp-for="Input.ConfirmPassword">Confirmar Contraseña</label>
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-lg fw-bold" style="background-color: #F5C002; color: #004070;">Registrarse</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small"><a asp-page="./Login" style="color: #004070;">¿Ya tienes cuenta? Inicia sesión</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

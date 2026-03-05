@@ -1,0 +1,93 @@
+@page
+@model SGPP.Web.Pages.Admin.Busqueda.IndexModel
+@{
+    ViewData["Title"] = "Búsqueda de Evaluaciones";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Búsqueda de Evaluaciones</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-page="/Admin/Dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Búsqueda</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" asp-for="SearchTerm" placeholder="Buscar por Nombre, Apellido o Código..." autofocus />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.FoundStudents.Any() || Model.FoundTutors.Any())
+    {
+        <div class="row">
+            <!-- Students Results -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <i class="fas fa-user-graduate me-1"></i> Resultados Estudiantes
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            @foreach(var s in Model.FoundStudents)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-bold">@s.Nombre</div>
+                                        <small class="text-muted">@s.Codigo - @s.Carrera</small>
+                                    </div>
+                                    <a asp-page="./Detalle" asp-route-type="student" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary">Historico</a>
+                                </li>
+                            }
+                            @if(!Model.FoundStudents.Any())
+                            {
+                                <li class="list-group-item text-muted text-center py-3">No se encontraron estudiantes</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutors Results -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <i class="fas fa-briefcase me-1"></i> Resultados Tutores
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            @foreach(var t in Model.FoundTutors)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-bold">@t.Nombre</div>
+                                        <small class="text-muted">@t.Empresa - @t.Cargo</small>
+                                    </div>
+                                    <a asp-page="./Detalle" asp-route-type="tutor" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">Historico</a>
+                                </li>
+                            }
+                            @if(!Model.FoundTutors.Any())
+                            {
+                                <li class="list-group-item text-muted text-center py-3">No se encontraron tutores</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model.SearchTerm))
+    {
+        <div class="alert alert-info text-center">
+            No se encontraron resultados para "<strong>@Model.SearchTerm</strong>".
+        </div>
+    }
+</div>

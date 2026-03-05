@@ -1,0 +1,224 @@
+@page
+@model SGPP.Web.Pages.Admin.Reports.DashboardDSSModel
+@{
+    ViewData["Title"] = "Dashboard Estratégico";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-ucb-blue"><i class="fas fa-chart-line me-2"></i>Dashboard Estratégico (DSS)</h1>
+        <form method="post" asp-page-handler="Export">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-file-excel me-2"></i>Descargar Reporte Gerencial
+            </button>
+        </form>
+    </div>
+
+    <!-- KPI 1: Skills Gap Analysis -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 pb-0">
+                    <h5 class="card-title text-ucb-blue">Análisis de Brechas de Competencias</h5>
+                    <h6 class="card-subtitle text-muted small">Promedio de logro según evaluación de empresas</h6>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="skillsGapChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-center small">
+                    @if (Model.AvgTechnicalScorePct > Model.AvgPowerSkillsScorePct)
+                    {
+                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Fortaleza: Conocimientos Técnicos solidos.</span>
+                        <span class="text-warning d-block">Atención: Reforzar habilidades blandas/liderazgo.</span>
+                    }
+                    else
+                    {
+                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Fortaleza: Excelentes habilidades blandas.</span>
+                        <span class="text-warning d-block">Atención: Verificar rigor técnico en malla curricular.</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 3: Market Demand -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 pb-0">
+                    <h5 class="card-title text-ucb-blue">Tendencias de Inserción Laboral</h5>
+                    <h6 class="card-subtitle text-muted small">Distribución de estudiantes por Área de Trabajo</h6>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                     <div style="height: 300px; width: 300px;">
+                        <canvas id="marketDemandChart"></canvas>
+                    </div>
+                </div>
+                 <div class="card-footer bg-light text-center small">
+                    <i class="fas fa-lightbulb text-warning me-1"></i>
+                    Las áreas con mayor inserción deberían priorizarse en convenios futuros.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI 2: Company Health Matrix -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0 pb-0 d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title text-ucb-blue">Matriz de Calidad de Convenios</h5>
+                        <h6 class="card-subtitle text-muted small">Satisfacción Estudiante vs. Evaluación Empresa</h6>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div style="height: 400px;">
+                                <canvas id="companyHealthChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-ucb-blue mb-3">Top 5 Empresas Destacadas</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead class="bg-ucb-yellow text-dark">
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th class="text-end">Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(var company in Model.Top5Companies)
+                                        {
+                                            <tr>
+                                                <td>@company.CompanyName</td>
+                                                <td class="text-end fw-bold">@company.CombinedScore.ToString("F1")</td>
+                                            </tr>
+                                        }
+                                        @if(!Model.Top5Companies.Any())
+                                        {
+                                            <tr><td colspan="2" class="text-center text-muted">Sin datos suficientes</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="alert alert-info small mt-3">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <strong>Cuadrante Superior Derecho:</strong> Alta satisfacción mutua. (Socios Estratégicos).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // --- COLORS ---
+        const ucbBlue = '#003366';
+        const ucbYellow = '#FFCC00';
+        const ucbGray = '#E2E8F0';
+        const ucbRed = '#DC3545';
+
+        // --- DATA FROM MODEL ---
+        const skillsData = {
+            labels: ['Conocimientos Técnicos', 'Habilidades Blandas (Power Skills)'],
+            datasets: [{
+                label: 'Nivel de Logro (%)',
+                data: [@Model.AvgTechnicalScorePct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture), @Model.AvgPowerSkillsScorePct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)],
+                backgroundColor: 'rgba(0, 51, 102, 0.2)',
+                borderColor: ucbBlue,
+                pointBackgroundColor: ucbYellow,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: ucbBlue
+            }]
+        };
+
+        const marketLabels = @Html.Raw(Json.Serialize(Model.MarketDemand.Select(m => m.Area)));
+        const marketCounts = @Html.Raw(Json.Serialize(Model.MarketDemand.Select(m => m.Count)));
+
+        const companyDataPoints = @Html.Raw(Json.Serialize(Model.CompanyMetrics.Select(c => new { x = c.StudentSatisfaction, y = c.CompanyEvaluation, r = Math.Min(c.StudentCount * 2 + 5, 20), company = c.CompanyName })));
+
+        // --- CHARTS CONFIG ---
+
+        // 1. Radar Chart (Skills)
+        new Chart(document.getElementById('skillsGapChart'), {
+            type: 'radar',
+            data: skillsData,
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { display: false },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { stepSize: 20 }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 2. Doughnut Chart (Market)
+        new Chart(document.getElementById('marketDemandChart'), {
+            type: 'doughnut',
+            data: {
+                labels: marketLabels,
+                datasets: [{
+                    data: marketCounts,
+                    backgroundColor: [ucbBlue, ucbYellow, '#6610f2', '#20c997', '#fd7e14', '#6c757d'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // 3. Scatter Plot (Company Health)
+        new Chart(document.getElementById('companyHealthChart'), {
+            type: 'bubble', // Using bubble for sizing logic simpler than scatter sometimes, or strictly scatter
+            data: {
+                datasets: [{
+                    label: 'Empresas',
+                    data: companyDataPoints,
+                    backgroundColor: 'rgba(0, 51, 102, 0.6)',
+                    borderColor: ucbBlue
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Satisfacción del Estudiante (Form A)' },
+                        min: 0,
+                        max: 40 // Approx max form A score? 36+?
+                    },
+                    y: {
+                        title: { display: true, text: 'Evaluación de Empresa (Form B)' },
+                        min: 0,
+                        max: 100 // Sum of Tech + Power
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.company + ': (Est: ' + context.raw.x.toFixed(1) + ', Emp: ' + context.raw.y.toFixed(1) + ')';
+                            }
+                        }
+                    },
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+}
