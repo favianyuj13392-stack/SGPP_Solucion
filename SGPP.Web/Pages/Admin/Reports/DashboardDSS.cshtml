@@ -1,114 +1,90 @@
 @page
 @model SGPP.Web.Pages.Admin.Reports.DashboardDSSModel
 @{
-    ViewData["Title"] = "Dashboard Estratégico";
+    ViewData["Title"] = "Dashboard Estratégico BI";
 }
 
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-ucb-blue"><i class="fas fa-chart-line me-2"></i>Dashboard Estratégico (DSS)</h1>
+        <div>
+            <h1 class="h3 text-ucb-blue fw-bold"><i class="fas fa-project-diagram me-2"></i>Dashboard Estratégico BI</h1>
+            <p class="text-muted mb-0">Análisis normalizado de desempeño, brechas e inserción laboral (Escala 0-100%).</p>
+        </div>
         <form method="post" asp-page-handler="Export">
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-file-excel me-2"></i>Descargar Reporte Gerencial
+            <button type="submit" class="btn btn-success shadow-sm">
+                <i class="fas fa-file-excel me-2"></i>Exportar Reporte Gerencial
             </button>
         </form>
     </div>
 
-    <!-- KPI 1: Skills Gap Analysis -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white border-bottom-0 pb-0">
-                    <h5 class="card-title text-ucb-blue">Análisis de Brechas de Competencias</h5>
-                    <h6 class="card-subtitle text-muted small">Promedio de logro según evaluación de empresas</h6>
+    <!-- Row 1: KPI 1 (Bubble) y KPI 2 (Grouped Bar) -->
+    <div class="row g-4 mb-4">
+        <!-- KPI 1: Salud de los Convenios -->
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+                    <h5 class="card-title text-ucb-blue fw-bold mb-0">Salud de los Convenios</h5>
+                    <small class="text-muted">Satisfacción Estudiante (Form A) vs. Desempeño Evaluado (Form B)</small>
                 </div>
                 <div class="card-body">
-                    <div style="height: 300px;">
-                        <canvas id="skillsGapChart"></canvas>
+                    <div style="height: 350px;">
+                        <canvas id="healthBubbleChart"></canvas>
                     </div>
                 </div>
-                <div class="card-footer bg-light text-center small">
-                    @if (Model.AvgTechnicalScorePct > Model.AvgPowerSkillsScorePct)
-                    {
-                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Fortaleza: Conocimientos Técnicos solidos.</span>
-                        <span class="text-warning d-block">Atención: Reforzar habilidades blandas/liderazgo.</span>
-                    }
-                    else
-                    {
-                        <span class="text-success"><i class="fas fa-check-circle me-1"></i>Fortaleza: Excelentes habilidades blandas.</span>
-                        <span class="text-warning d-block">Atención: Verificar rigor técnico en malla curricular.</span>
-                    }
+                <div class="card-footer bg-light border-0 small text-center text-muted">
+                    <i class="fas fa-info-circle text-primary me-1"></i>
+                    <em>Cuadrante Superior Derecho indica alianzas altamente exitosas. El tamaño refleja el volumen de asignaciones.</em>
                 </div>
             </div>
         </div>
 
-        <!-- KPI 3: Market Demand -->
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white border-bottom-0 pb-0">
-                    <h5 class="card-title text-ucb-blue">Tendencias de Inserción Laboral</h5>
-                    <h6 class="card-subtitle text-muted small">Distribución de estudiantes por Área de Trabajo</h6>
+        <!-- KPI 2: Brechas Curriculares -->
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+                    <h5 class="card-title text-ucb-blue fw-bold mb-0">Brechas Curriculares</h5>
+                    <small class="text-muted">Desempeño por Carrera: Técnico vs Power Skills (Logro %)</small>
                 </div>
-                <div class="card-body d-flex justify-content-center">
-                     <div style="height: 300px; width: 300px;">
-                        <canvas id="marketDemandChart"></canvas>
+                <div class="card-body">
+                    <div style="height: 350px;">
+                        <canvas id="gapBarChart"></canvas>
                     </div>
                 </div>
-                 <div class="card-footer bg-light text-center small">
-                    <i class="fas fa-lightbulb text-warning me-1"></i>
-                    Las áreas con mayor inserción deberían priorizarse en convenios futuros.
+                <div class="card-footer bg-light border-0 small text-center text-muted">
+                    <i class="fas fa-balance-scale text-warning me-1"></i>
+                    <em>Analiza desalineamientos entre las habilidades blandas y dominio tecnológico.</em>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- KPI 2: Company Health Matrix -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom-0 pb-0 d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title text-ucb-blue">Matriz de Calidad de Convenios</h5>
-                        <h6 class="card-subtitle text-muted small">Satisfacción Estudiante vs. Evaluación Empresa</h6>
-                    </div>
+    <!-- Row 2: KPI 3 (Horiz Stack) y KPI 4 (Line) -->
+    <div class="row g-4 mb-4">
+        <!-- KPI 3: Distribución de Empleabilidad -->
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+                    <h5 class="card-title text-ucb-blue fw-bold mb-0">Distribución de Empleabilidad</h5>
+                    <small class="text-muted">Inserción de Carreras por Área de Trabajo en la Empresa</small>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div style="height: 400px;">
-                                <canvas id="companyHealthChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <h6 class="text-ucb-blue mb-3">Top 5 Empresas Destacadas</h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm table-striped">
-                                    <thead class="bg-ucb-yellow text-dark">
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th class="text-end">Score</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(var company in Model.Top5Companies)
-                                        {
-                                            <tr>
-                                                <td>@company.CompanyName</td>
-                                                <td class="text-end fw-bold">@company.CombinedScore.ToString("F1")</td>
-                                            </tr>
-                                        }
-                                        @if(!Model.Top5Companies.Any())
-                                        {
-                                            <tr><td colspan="2" class="text-center text-muted">Sin datos suficientes</td></tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="alert alert-info small mt-3">
-                                <i class="fas fa-info-circle me-1"></i>
-                                <strong>Cuadrante Superior Derecho:</strong> Alta satisfacción mutua. (Socios Estratégicos).
-                            </div>
-                        </div>
+                    <div style="height: 350px;">
+                        <canvas id="empleabilidadStackedChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 4: Tendencias de Calidad -->
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+                    <h5 class="card-title text-ucb-blue fw-bold mb-0">Evolución de la Calidad</h5>
+                    <small class="text-muted">Tendencia Histórica de Evaluaciones (Logro %)</small>
+                </div>
+                <div class="card-body">
+                    <div style="height: 350px;">
+                        <canvas id="tendenciaLineChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -122,101 +98,232 @@
         // --- COLORS ---
         const ucbBlue = '#003366';
         const ucbYellow = '#FFCC00';
-        const ucbGray = '#E2E8F0';
-        const ucbRed = '#DC3545';
+        const ucbLightBlue = '#4a90e2';
+        const ucbGray = '#6c757d';
+        
+        // Extended palette for stacked charts
+        const palette = [
+            ucbBlue, ucbYellow, ucbLightBlue, 
+            '#20c997', '#e83e8c', '#fd7e14', '#6610f2', '#17a2b8', '#dc3545', '#28a745'
+        ];
 
-        // --- DATA FROM MODEL ---
-        const skillsData = {
-            labels: ['Conocimientos Técnicos', 'Habilidades Blandas (Power Skills)'],
-            datasets: [{
-                label: 'Nivel de Logro (%)',
-                data: [@Model.AvgTechnicalScorePct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture), @Model.AvgPowerSkillsScorePct.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)],
-                backgroundColor: 'rgba(0, 51, 102, 0.2)',
-                borderColor: ucbBlue,
-                pointBackgroundColor: ucbYellow,
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: ucbBlue
-            }]
-        };
+        // --- GLOBAL SETTINGS ---
+        Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif";
+        Chart.defaults.color = '#495057';
 
-        const marketLabels = @Html.Raw(Json.Serialize(Model.MarketDemand.Select(m => m.Area)));
-        const marketCounts = @Html.Raw(Json.Serialize(Model.MarketDemand.Select(m => m.Count)));
+        // ============================================
+        // KPI 1: BUBBLE CHART (Salud Convenios)
+        // ============================================
+        const bubbleDataRaw = @Html.Raw(Json.Serialize(Model.ConvenioHealthMetrics.Select(c => new { 
+            x = c.SatisfaccionPct, 
+            y = c.EvaluacionPct, 
+            r = Math.Min(c.Count * 4 + 6, 35), // Escalar burbuja
+            company = c.Empresa 
+        })));
 
-        const companyDataPoints = @Html.Raw(Json.Serialize(Model.CompanyMetrics.Select(c => new { x = c.StudentSatisfaction, y = c.CompanyEvaluation, r = Math.Min(c.StudentCount * 2 + 5, 20), company = c.CompanyName })));
-
-        // --- CHARTS CONFIG ---
-
-        // 1. Radar Chart (Skills)
-        new Chart(document.getElementById('skillsGapChart'), {
-            type: 'radar',
-            data: skillsData,
-            options: {
-                scales: {
-                    r: {
-                        angleLines: { display: false },
-                        suggestedMin: 0,
-                        suggestedMax: 100,
-                        ticks: { stepSize: 20 }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        // 2. Doughnut Chart (Market)
-        new Chart(document.getElementById('marketDemandChart'), {
-            type: 'doughnut',
+        new Chart(document.getElementById('healthBubbleChart'), {
+            type: 'bubble',
             data: {
-                labels: marketLabels,
                 datasets: [{
-                    data: marketCounts,
-                    backgroundColor: [ucbBlue, ucbYellow, '#6610f2', '#20c997', '#fd7e14', '#6c757d'],
-                    borderWidth: 1
+                    label: 'Salud del Convenio',
+                    data: bubbleDataRaw,
+                    backgroundColor: 'rgba(0, 51, 102, 0.65)',
+                    borderColor: ucbBlue,
+                    borderWidth: 1,
+                    hoverBackgroundColor: ucbYellow,
+                    hoverBorderColor: ucbBlue
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Trato Estudiante (Form A %)', font: {weight: 'bold'} },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    },
+                    y: {
+                        title: { display: true, text: 'Desempeño Estudiante (Form B %)', font: {weight: 'bold'} },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
                 plugins: {
-                    legend: { position: 'right' }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.raw.company + ': (Est: ' + ctx.raw.x.toFixed(1) + '%, Emp: ' + ctx.raw.y.toFixed(1) + '%)';
+                            }
+                        }
+                    }
                 }
             }
         });
 
-        // 3. Scatter Plot (Company Health)
-        new Chart(document.getElementById('companyHealthChart'), {
-            type: 'bubble', // Using bubble for sizing logic simpler than scatter sometimes, or strictly scatter
+        // ============================================
+        // KPI 2: GROUPED BAR CHART (Brechas)
+        // ============================================
+        const brechaLabels = @Html.Raw(Json.Serialize(Model.BrechaMetrics.Select(b => b.Carrera)));
+        const brechaTech = @Html.Raw(Json.Serialize(Model.BrechaMetrics.Select(b => b.TechPct)));
+        const brechaPower = @Html.Raw(Json.Serialize(Model.BrechaMetrics.Select(b => b.PowerPct)));
+
+        new Chart(document.getElementById('gapBarChart'), {
+            type: 'bar',
             data: {
-                datasets: [{
-                    label: 'Empresas',
-                    data: companyDataPoints,
-                    backgroundColor: 'rgba(0, 51, 102, 0.6)',
-                    borderColor: ucbBlue
-                }]
+                labels: brechaLabels,
+                datasets: [
+                    {
+                        label: 'Competencias Técnicas (%)',
+                        data: brechaTech,
+                        backgroundColor: ucbBlue,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Power Skills (%)',
+                        data: brechaPower,
+                        backgroundColor: ucbYellow,
+                        borderRadius: 4
+                    }
+                ]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
-                    x: {
-                        title: { display: true, text: 'Satisfacción del Estudiante (Form A)' },
-                        min: 0,
-                        max: 40 // Approx max form A score? 36+?
-                    },
                     y: {
-                        title: { display: true, text: 'Evaluación de Empresa (Form B)' },
                         min: 0,
-                        max: 100 // Sum of Tech + Power
+                        max: 100,
+                        title: { display: true, text: 'Logro (%)' },
+                        grid: { borderDash: [5, 5] }
                     }
                 },
                 plugins: {
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                return context.raw.company + ': (Est: ' + context.raw.x.toFixed(1) + ', Emp: ' + context.raw.y.toFixed(1) + ')';
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.raw.toFixed(1) + '%';
                             }
                         }
+                    }
+                }
+            }
+        });
+
+        // ============================================
+        // KPI 3: STACKED HORIZONTAL BAR (Empleabilidad)
+        // ============================================
+        const empRaw = @Html.Raw(Json.Serialize(Model.EmpleabilidadMetrics));
+        
+        // ASP.NET JSON Serialize changes casing sometimes (PascalCase vs camelCase)
+        const getCarrera = (d) => d.carrera || d.Carrera;
+        const getArea = (d) => d.areaTrabajo || d.AreaTrabajo;
+        const getCount = (d) => d.count !== undefined ? d.count : d.Count;
+
+        // Extract unique arrays
+        const empCarreras = [...new Set(empRaw.map(getCarrera))];
+        const empAreas = [...new Set(empRaw.map(getArea))];
+
+        // Map datasets dynamically for each area
+        const empDatasets = empAreas.map((area, index) => {
+            return {
+                label: area,
+                data: empCarreras.map(carrera => {
+                    const match = empRaw.find(d => getCarrera(d) === carrera && getArea(d) === area);
+                    return match ? getCount(match) : 0;
+                }),
+                backgroundColor: palette[index % palette.length],
+                borderRadius: 2
+            };
+        });
+
+        new Chart(document.getElementById('empleabilidadStackedChart'), {
+            type: 'bar',
+            data: {
+                labels: empCarreras,
+                datasets: empDatasets
+            },
+            options: {
+                indexAxis: 'y', // Makes it horizontal
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: { display: true, text: 'Cantidad de Estudiantes' },
+                        ticks: { stepSize: 1 }
                     },
-                    legend: { display: false }
+                    y: {
+                        stacked: true,
+                        title: { display: true, text: 'Carreras' }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'right',
+                        labels: { boxWidth: 12 }
+                    }
+                }
+            }
+        });
+
+        // ============================================
+        // KPI 4: LINE CHART (Tendencias)
+        // ============================================
+        const tendLabels = @Html.Raw(Json.Serialize(Model.TendenciaMetrics.Select(t => t.Periodo)));
+        const tendFormA = @Html.Raw(Json.Serialize(Model.TendenciaMetrics.Select(t => t.PromedioA_Pct)));
+        const tendFormB = @Html.Raw(Json.Serialize(Model.TendenciaMetrics.Select(t => t.PromedioB_Pct)));
+
+        new Chart(document.getElementById('tendenciaLineChart'), {
+            type: 'line',
+            data: {
+                labels: tendLabels,
+                datasets: [
+                    {
+                        label: 'Satisfacción Estudiantil (Form A)',
+                        data: tendFormA,
+                        borderColor: ucbBlue,
+                        backgroundColor: 'rgba(0, 51, 102, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: ucbBlue,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Desempeño Laboral (Form B)',
+                        data: tendFormB,
+                        borderColor: ucbYellow,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        pointBackgroundColor: ucbYellow,
+                        pointRadius: 5,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        title: { display: true, text: 'Logro Promedio (%)' }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ctx.dataset.label + ': ' + ctx.raw.toFixed(1) + '%';
+                            }
+                        }
+                    }
                 }
             }
         });
