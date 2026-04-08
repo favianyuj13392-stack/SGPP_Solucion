@@ -16,10 +16,9 @@ jobs:
       - name: 📥 Descargar el código
         uses: actions/checkout@v4
 
-
-
       - name: 📦 Compilar el proyecto (Build)
         # Reemplaza 'SGPP.Web/SGPP.Web.csproj' con la ruta real de tu archivo de proyecto principal
+        # prueba concola github
         run: dotnet build SGPP.Web/SGPP.Web.csproj --configuration Release
 
       - name: 🚀 Generar binarios (Publish)
