@@ -29,7 +29,9 @@ jobs:
       - name: 🛑 Apagar la app en IIS (app_offline)
         # Crea el archivo mágico que le dice a IIS que suelte los archivos y muestre "En mantenimiento"
         # Reemplaza 'C:\inetpub\wwwroot\SGPP' con la ruta real en el servidor
-        run: echo "El sistema se esta actualizando. Volvemos en unos segundos..." > C:\inetpub\wwwroot\SGPP\app_offline.htm
+        run: |
+          echo "El sistema se esta actualizando. Volvemos en unos segundos..." > C:\inetpub\wwwroot\SGPP\app_offline.htm
+          Start-Sleep -Seconds 5
 
       - name: 📂 Copiar archivos al Servidor IIS
         # Copia todo lo nuevo de publish_output a la carpeta del IIS y sobreescribe
