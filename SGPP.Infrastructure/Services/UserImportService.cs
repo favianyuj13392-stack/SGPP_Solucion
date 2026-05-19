@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using SGPP.Domain.Entities;
 using SGPP.Domain.Enums;
 using SGPP.Infrastructure.Persistence;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGPP.Infrastructure.Services;
 
@@ -42,7 +44,10 @@ public class UserImportService : IUserImportService
                 
                 if (string.IsNullOrEmpty(email)) continue;
 
-                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(6).GetValue<string>().Trim(), result);
+                string codigo = row.Cell(4).GetValue<string>().Trim();
+                string passwordDefault = string.IsNullOrEmpty(codigo) ? "Ucb.2026!" : $"Ucb.{codigo}!";
+
+                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(6).GetValue<string>().Trim(), passwordDefault, result);
                 if (user == null) continue; // Error already added to result
 
                 await EnsureRole(user, "Estudiante");
@@ -50,13 +55,8 @@ public class UserImportService : IUserImportService
                 var estudiante = await _context.Estudiantes.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
                 if (estudiante == null)
                 {
-                    string codigo = row.Cell(4).GetValue<string>().Trim();
                     string carreraStr = row.Cell(5).GetValue<string>().Trim();
-                    
-                    if (!Enum.TryParse<Carrera>(carreraStr, true, out var carreraEnum))
-                    {
-                        carreraEnum = Carrera.OTHER; // Default
-                    }
+                    Carrera carreraEnum = ParseCarrera(carreraStr);
 
                     estudiante = new Estudiante
                     {
@@ -100,7 +100,7 @@ public class UserImportService : IUserImportService
 
                 if (string.IsNullOrEmpty(email)) continue;
 
-                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(4).GetValue<string>().Trim(), result);
+                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(4).GetValue<string>().Trim(), "Ucb.2026!", result);
                 if (user == null) continue;
 
                 await EnsureRole(user, "TutorAcademico");
@@ -109,10 +109,7 @@ public class UserImportService : IUserImportService
                 if (docente == null)
                 {
                     string carreraStr = row.Cell(5).GetValue<string>().Trim();
-                    if (!Enum.TryParse<Carrera>(carreraStr, true, out var carreraEnum))
-                    {
-                        carreraEnum = Carrera.OTHER;
-                    }
+                    Carrera carreraEnum = ParseCarrera(carreraStr);
 
                     docente = new TutorAcademico
                     {
@@ -153,7 +150,7 @@ public class UserImportService : IUserImportService
 
                 if (string.IsNullOrEmpty(email)) continue;
 
-                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(4).GetValue<string>().Trim(), result);
+                var user = await EnsureUserAsync(nombre, apellido, email, row.Cell(4).GetValue<string>().Trim(), "Ucb.2026!", result);
                 if (user == null) continue;
 
                 await EnsureRole(user, "Tutor");
@@ -204,7 +201,7 @@ public class UserImportService : IUserImportService
         return result;
     }
 
-    private async Task<ApplicationUser?> EnsureUserAsync(string nombre, string apellido, string email, string phone, ImportResult result)
+    private async Task<ApplicationUser?> EnsureUserAsync(string nombre, string apellido, string email, string phone, string password, ImportResult result)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -219,7 +216,7 @@ public class UserImportService : IUserImportService
                 EsActivo = true,
                 PhoneNumber = phone
             };
-            var createResult = await _userManager.CreateAsync(user, "Ucb.2026!");
+            var createResult = await _userManager.CreateAsync(user, password);
             if (!createResult.Succeeded)
             {
                 result.Errors.Add($"Error creando usuario {email} - {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
@@ -249,5 +246,30 @@ public class UserImportService : IUserImportService
         {
             await _userManager.AddToRoleAsync(user, role);
         }
+    }
+
+    private Carrera ParseCarrera(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return Carrera.OTHER;
+        input = input.Trim();
+        
+        // 1. Intento rápido: Validar si escribieron el código corto (ej. "SIS")
+        if (Enum.TryParse<Carrera>(input, true, out var carreraEnum))
+            return carreraEnum;
+
+        // 2. Intento profundo: Buscar por el nombre completo "Display(Name)"
+        foreach (var field in typeof(Carrera).GetFields())
+        {
+            if (Attribute.GetCustomAttribute(field, typeof(DisplayAttribute)) is DisplayAttribute attribute)
+            {
+                // Ignorar mayúsculas, minúsculas y tildes básicas
+                if (string.Equals(attribute.Name, input, StringComparison.OrdinalIgnoreCase))
+                {
+                    return (Carrera)field.GetValue(null)!;
+                }
+            }
+        }
+
+        return Carrera.OTHER;
     }
 }

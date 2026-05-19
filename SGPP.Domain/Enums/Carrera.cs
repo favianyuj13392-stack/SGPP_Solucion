@@ -32,6 +32,8 @@ public enum Carrera
     IAM,
     [Display(Name = "Ingeniería Biomédica")]
     INB,
+    [Display(Name = "Ingeniería Bioquímica y de Bioprocesos")]
+    IBB,
     [Display(Name = "Ingeniería Civil")]
     CIV,
     [Display(Name = "Ingeniería Comercial")]
@@ -40,7 +42,7 @@ public enum Carrera
     SIS,
     [Display(Name = "Ingeniería en Innovación Empresarial")]
     IIE,
-    [Display(Name = "Ingeniería en Logística y Analítica de la Cadena de Suministros")]
+    [Display(Name = "Ingeniería en Logística de Cadenas de Suministro")]
     IGL,
     [Display(Name = "Ingeniería en Multimedia e Interactividad Digital")]
     IMU,
@@ -50,6 +52,8 @@ public enum Carrera
     IND,
     [Display(Name = "Ingeniería Mecatrónica")]
     IMT,
+    [Display(Name = "Ingeniería en Energía")]
+    IEN,
     [Display(Name = "Ingeniería Química")]
     IQM,
     [Display(Name = "Marketing y Medios Digitales")]
