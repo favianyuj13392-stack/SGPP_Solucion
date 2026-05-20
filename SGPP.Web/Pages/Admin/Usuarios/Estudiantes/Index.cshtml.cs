@@ -19,6 +19,12 @@ public class IndexModel : PageModel
 
     public List<EstudianteItem> Estudiantes { get; set; } = new();
 
+    [BindProperty(SupportsGet = true)]
+    public string? SearchTerm { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? CarreraFilter { get; set; }
+
     public class EstudianteItem
     {
         public int Id { get; set; }
@@ -27,13 +33,29 @@ public class IndexModel : PageModel
         public string Email { get; set; } = string.Empty;
         public string Codigo { get; set; } = string.Empty;
         public string Carrera { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
         public bool EsActivo { get; set; }
     }
 
     public async Task OnGetAsync()
     {
-        var estudiantesDb = await _context.Estudiantes
+        var query = _context.Estudiantes
             .Include(e => e.ApplicationUser)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            query = query.Where(e => e.ApplicationUser.Nombre.Contains(SearchTerm) 
+                                  || e.ApplicationUser.Apellido.Contains(SearchTerm) 
+                                  || e.CodigoEstudiante.Contains(SearchTerm));
+        }
+
+        if (!string.IsNullOrWhiteSpace(CarreraFilter) && Enum.TryParse<SGPP.Domain.Enums.Carrera>(CarreraFilter, out var parsedCarrera))
+        {
+            query = query.Where(e => e.Carrera == parsedCarrera);
+        }
+
+        var estudiantesDb = await query
             .OrderBy(e => e.ApplicationUser.Apellido)
             .ThenBy(e => e.ApplicationUser.Nombre)
             .ToListAsync();
@@ -46,6 +68,7 @@ public class IndexModel : PageModel
             Email = e.ApplicationUser.Email ?? "",
             Codigo = e.CodigoEstudiante,
             Carrera = e.Carrera.ToString(),
+            Telefono = e.ApplicationUser.PhoneNumber ?? "-",
             EsActivo = e.ApplicationUser.EsActivo
         }).ToList();
     }

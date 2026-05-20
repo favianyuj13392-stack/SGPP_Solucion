@@ -12,6 +12,28 @@
     </ol>
 
     <div class="card mb-4">
+        <div class="card-body bg-light">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" asp-for="SearchTerm" class="form-control" placeholder="Buscar por Nombre, Apellido o Código...">
+                </div>
+                <div class="col-md-5">
+                    <select asp-for="CarreraFilter" class="form-select" asp-items="Html.GetEnumSelectList<SGPP.Domain.Enums.Carrera>()">
+                        <option value="">Todas las Carreras</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Buscar</button>
+                    @if(!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.CarreraFilter))
+                    {
+                        <a asp-page="./Index" class="btn btn-sm btn-outline-secondary w-100 mt-2">Limpiar</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <span><i class="fas fa-user-graduate me-1"></i> Lista de Estudiantes</span>
             <a asp-page="./Create" class="btn btn-light btn-sm text-primary fw-bold">
@@ -25,6 +47,7 @@
                         <th>Nombre Completo</th>
                         <th>Email</th>
                         <th>Código</th>
+                        <th>Teléfono</th>
                         <th>Carrera</th>
                         <th>Activo</th>
                         <th>Acciones</th>
@@ -37,6 +60,7 @@
                             <td>@item.NombreCompleto</td>
                             <td>@item.Email</td>
                             <td>@item.Codigo</td>
+                            <td>@item.Telefono</td>
                             <td>@item.Carrera</td>
                             <td class="text-center">
                                 @if(item.EsActivo) { <span class="badge bg-success">Si</span> } 
