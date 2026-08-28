@@ -74,6 +74,33 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware: Forzar cambio de contraseña temporal si el usuario tiene DebeCambiarPassword = true
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        var path = context.Request.Path.Value?.ToLower() ?? "";
+        if (!path.StartsWith("/account/changepassword") &&
+            !path.StartsWith("/account/logout") &&
+            !path.StartsWith("/account/accessdenied") &&
+            !path.StartsWith("/css") &&
+            !path.StartsWith("/js") &&
+            !path.StartsWith("/lib") &&
+            !path.StartsWith("/img"))
+        {
+            var userManager = context.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = await userManager.GetUserAsync(context.User);
+            if (user != null && user.DebeCambiarPassword)
+            {
+                context.Response.Redirect("/Account/ChangePassword");
+                return;
+            }
+        }
+    }
+
+    await next();
+});
+
 app.MapRazorPages();
 
 app.Run();
