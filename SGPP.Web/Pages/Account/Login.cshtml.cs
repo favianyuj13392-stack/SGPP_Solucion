@@ -44,6 +44,7 @@ public class LoginModel : PageModel
              var user = await _userManager.GetUserAsync(User);
              if (user != null)
              {
+                if (user.DebeCambiarPassword) return RedirectToPage("/Account/ChangePassword");
                 if (await _userManager.IsInRoleAsync(user, "Admin")) return RedirectToPage("/Admin/Dashboard");
                 if (await _userManager.IsInRoleAsync(user, "Tutor")) return RedirectToPage("/Tutor/Dashboard");
                 if (await _userManager.IsInRoleAsync(user, "TutorAcademico")) return RedirectToPage("/Academic/Dashboard");
@@ -77,6 +78,11 @@ public class LoginModel : PageModel
                 var user = await _userManager.FindByEmailAsync(Input.Email);
                 if (user != null)
                 {
+                    if (user.DebeCambiarPassword)
+                    {
+                        return RedirectToPage("/Account/ChangePassword");
+                    }
+
                     // Role-based redirection logic
                     if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
@@ -85,6 +91,10 @@ public class LoginModel : PageModel
                     if (await _userManager.IsInRoleAsync(user, "Tutor"))
                     {
                         return RedirectToPage("/Tutor/Dashboard");
+                    }
+                    if (await _userManager.IsInRoleAsync(user, "TutorAcademico"))
+                    {
+                        return RedirectToPage("/Academic/Dashboard");
                     }
                     if (await _userManager.IsInRoleAsync(user, "Estudiante"))
                     {
