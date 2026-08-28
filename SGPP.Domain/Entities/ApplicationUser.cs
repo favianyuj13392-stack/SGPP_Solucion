@@ -12,4 +12,6 @@ public class ApplicationUser : IdentityUser
     public string Apellido { get; set; } = string.Empty;
 
     public bool EsActivo { get; set; } = true;
+
+    public bool DebeCambiarPassword { get; set; } = false;
 }
