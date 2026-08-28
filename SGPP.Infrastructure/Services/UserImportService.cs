@@ -214,7 +214,8 @@ public class UserImportService : IUserImportService
                 Apellido = apellido,
                 EmailConfirmed = true,
                 EsActivo = true,
-                PhoneNumber = phone
+                PhoneNumber = phone,
+                DebeCambiarPassword = true
             };
             var createResult = await _userManager.CreateAsync(user, password);
             if (!createResult.Succeeded)

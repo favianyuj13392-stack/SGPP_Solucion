@@ -52,7 +52,8 @@ public class CreateModel : PageModel
             Nombre = Input.Nombre,
             Apellido = Input.Apellido,
             EsActivo = true,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            DebeCambiarPassword = true
         };
 
         var result = await _userManager.CreateAsync(user, Input.Password);
