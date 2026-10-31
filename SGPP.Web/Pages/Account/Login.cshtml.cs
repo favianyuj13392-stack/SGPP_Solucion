@@ -72,10 +72,16 @@ public class LoginModel : PageModel
 
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: false, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null && !user.EsActivo)
+                {
+                    await _signInManager.SignOutAsync();
+                    ModelState.AddModelError(string.Empty, "Su cuenta se encuentra desactivada. Comuníquese con la administración.");
+                    return Page();
+                }
                 if (user != null)
                 {
                     if (user.DebeCambiarPassword)
