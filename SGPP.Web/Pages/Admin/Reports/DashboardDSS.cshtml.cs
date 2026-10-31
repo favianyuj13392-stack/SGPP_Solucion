@@ -71,10 +71,10 @@ public class DashboardDSSModel : PageModel
 
         if (validAssignments.Any())
         {
-            Resumen_TechPct = Math.Min(100.0, validAssignments.Average(a => (a.FormularioB!.ScoreTecnicoBruto / 32.0) * 100.0));
-            Resumen_PowerPct = Math.Min(100.0, validAssignments.Average(a => (a.FormularioB!.ScorePowerSkillsBruto / 40.0) * 100.0));
+            Resumen_TechPct = Math.Min(100.0, validAssignments.Average(a => (a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0));
+            Resumen_PowerPct = Math.Min(100.0, validAssignments.Average(a => (a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0));
             Resumen_FormAPct = Math.Min(100.0, validAssignments.Average(a => (a.FormularioA!.ScoreCentroBruto / 36.0) * 100.0));
-            Resumen_FormBPct = Math.Min(100.0, validAssignments.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 32.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 40.0) * 100.0)) / 2.0));
+            Resumen_FormBPct = Math.Min(100.0, validAssignments.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0)) / 2.0));
         }
 
         // --- KPI 1: Salud de Convenios ---
@@ -86,7 +86,7 @@ public class DashboardDSSModel : PageModel
                 Empresa = g.Key,
                 Count = g.Count(),
                 SatisfaccionPct = Math.Min(100.0, g.Average(a => (a.FormularioA!.ScoreCentroBruto / 36.0) * 100.0)),
-                EvaluacionPct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 32.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 40.0) * 100.0)) / 2.0))
+                EvaluacionPct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0)) / 2.0))
             })
             .ToList();
 
@@ -97,8 +97,8 @@ public class DashboardDSSModel : PageModel
             .Select(g => new BrechaCurricularMetric
             {
                 Carrera = g.Key,
-                TechPct = Math.Min(100.0, g.Average(a => (a.FormularioB!.ScoreTecnicoBruto / 32.0) * 100.0)),
-                PowerPct = Math.Min(100.0, g.Average(a => (a.FormularioB!.ScorePowerSkillsBruto / 40.0) * 100.0))
+                TechPct = Math.Min(100.0, g.Average(a => (a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0)),
+                PowerPct = Math.Min(100.0, g.Average(a => (a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0))
             })
             .ToList();
 
@@ -120,7 +120,7 @@ public class DashboardDSSModel : PageModel
                 {
                     Periodo = cleanPeriodo,
                     PromedioA_Pct = Math.Min(100.0, g.Average(a => (a.FormularioA!.ScoreCentroBruto / 36.0) * 100.0)),
-                    PromedioB_Pct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 32.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 40.0) * 100.0)) / 2.0))
+                    PromedioB_Pct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0)) / 2.0))
                 };
             })
             .OrderBy(t => t.Periodo)
