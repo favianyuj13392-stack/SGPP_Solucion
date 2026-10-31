@@ -99,6 +99,14 @@ public class FormularioAModel : PageModel
         
         if (asignacion == null) return NotFound();
 
+        // Check if evaluation was already submitted to prevent double-submit concurrency crashes
+        var alreadySubmitted = await _context.EvaluacionesEstudiante.AnyAsync(f => f.AsignacionId == asignacionId);
+        if (alreadySubmitted)
+        {
+            TempData["SuccessMessage"] = "Su evaluación ya fue registrada previamente.";
+            return RedirectToPage("./Dashboard");
+        }
+
         // 2. Calculate Scores
         // Rule: Centro x1, TutorInst x2, TutorAcad x1
         
