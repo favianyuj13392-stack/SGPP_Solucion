@@ -141,14 +141,14 @@ public class DetalleModel : PageModel
          
          if (type == "Formulario A")
          {
-            var wb = excelService.GenerateFormA(id, rootPath);
+            using var wb = excelService.GenerateFormA(id, rootPath);
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
             return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"FormA_{id}.xlsx");
          }
          else // Formulario B
          {
-            var wb = excelService.GenerateFormB(id, rootPath);
+            using var wb = excelService.GenerateFormB(id, rootPath);
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
             return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"FormB_{id}.xlsx");

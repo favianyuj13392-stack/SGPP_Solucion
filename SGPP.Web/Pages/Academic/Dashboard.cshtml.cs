@@ -119,12 +119,23 @@ public class DashboardModel : PageModel
         return Page();
     }
     
-    public IActionResult OnGetExportFormA(int id, [FromServices] SGPP.Infrastructure.Services.IExcelExportService excelService, [FromServices] IWebHostEnvironment env)
+    public async Task<IActionResult> OnGetExportFormA(int id, [FromServices] SGPP.Infrastructure.Services.IExcelExportService excelService, [FromServices] IWebHostEnvironment env)
     {
         // DEBUG: Unmasked error + Safe Path
         string rootPath = env.WebRootPath ?? System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
         
-        var wb = excelService.GenerateFormA(id, rootPath);
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Challenge();
+
+        var asignacion = await _context.Asignaciones.FirstOrDefaultAsync(a => a.Id == id);
+        if (asignacion == null) return NotFound("Asignación no encontrada.");
+
+        if (!User.IsInRole("Admin") && asignacion.TutorAcademicoId != user.Id)
+        {
+            return Forbid();
+        }
+
+        using var wb = excelService.GenerateFormA(id, rootPath);
         using (var stream = new MemoryStream())
         {
             wb.SaveAs(stream);
@@ -133,12 +144,23 @@ public class DashboardModel : PageModel
         }
     }
 
-    public IActionResult OnGetExportFormB(int id, [FromServices] SGPP.Infrastructure.Services.IExcelExportService excelService, [FromServices] IWebHostEnvironment env)
+    public async Task<IActionResult> OnGetExportFormB(int id, [FromServices] SGPP.Infrastructure.Services.IExcelExportService excelService, [FromServices] IWebHostEnvironment env)
     {
         // DEBUG: Unmasked error + Safe Path
         string rootPath = env.WebRootPath ?? System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
 
-        var wb = excelService.GenerateFormB(id, rootPath);
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Challenge();
+
+        var asignacion = await _context.Asignaciones.FirstOrDefaultAsync(a => a.Id == id);
+        if (asignacion == null) return NotFound("Asignación no encontrada.");
+
+        if (!User.IsInRole("Admin") && asignacion.TutorAcademicoId != user.Id)
+        {
+            return Forbid();
+        }
+
+        using var wb = excelService.GenerateFormB(id, rootPath);
         using (var stream = new MemoryStream())
         {
             wb.SaveAs(stream);
