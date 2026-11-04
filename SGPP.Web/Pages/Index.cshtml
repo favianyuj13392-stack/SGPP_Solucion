@@ -1,13 +1,209 @@
 @page
 @model SGPP.Web.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Portal de Prácticas Pre-Profesionales";
 }
 
-<div class="text-center mt-5">
-    <img src="~/img/ucb_logo.png" alt="UCB Logo" height="150" class="mb-4">
-    <h1 class="display-4 text-ucb-blue fw-bold">Bienvenido al SGPP</h1>
-    <p>Sistema de Gestión de Prácticas Profesionales</p>
-    <a href="/Account/Login" class="btn btn-primary btn-lg mx-2">Iniciar Sesión</a>
-    <a href="/Account/Register" class="btn btn-outline-primary btn-lg mx-2">Registrarse</a>
+<div class="landing-container mb-5">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 px-3 mb-5 rounded-4 shadow-sm bg-white border">
+        <div class="d-flex justify-content-center mb-3">
+            <img src="~/img/ucb_logo.png" alt="Universidad Católica Boliviana" height="110" class="img-fluid drop-shadow">
+        </div>
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3 tracking-wide">
+            USEI · Sede La Paz
+        </span>
+        <h1 class="display-5 fw-bold text-ucb-blue mb-2">Sistema de Gestión de Prácticas Pre-Profesionales</h1>
+        <p class="lead text-muted mx-auto mb-4" style="max-width: 720px;">
+            Plataforma oficial de la Universidad Católica Boliviana "San Pablo" para la vinculación, seguimiento y evaluación de prácticas profesionales entre estudiantes, tutores académicos y empresas.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="/Account/Login" class="btn btn-primary btn-lg px-4 py-2 shadow-sm fw-semibold">
+                <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+            </a>
+            <a href="#tutoriales" class="btn btn-outline-secondary btn-lg px-4 py-2 fw-semibold">
+                <i class="fas fa-play-circle me-2"></i> Ver Tutoriales
+            </a>
+        </div>
+    </div>
+
+    <!-- Video Tutorials Section -->
+    <div id="tutoriales" class="mb-5 pt-3">
+        <div class="text-center mb-4">
+            <h2 class="h3 fw-bold text-ucb-blue">
+                <i class="fas fa-graduation-cap me-2 text-warning"></i> Centro de Tutoriales y Guías
+            </h2>
+            <p class="text-muted">Selecciona tu rol para conocer el paso a paso del proceso de prácticas en el SGPP</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Tutorial Estudiantes -->
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden tutorial-card">
+                    <div class="card-header bg-ucb-blue text-white py-3 px-4 d-flex align-items-center justify-content-between">
+                        <span class="fw-bold"><i class="fas fa-user-graduate me-2 text-warning"></i> Tutorial para Estudiantes</span>
+                        <span class="badge bg-light text-dark rounded-pill">Guía Oficial</span>
+                    </div>
+                    <div class="ratio ratio-16x9 bg-dark">
+                        <iframe src="https://drive.google.com/file/d/1lEK_lHgEPED5tZicb2ypnC579MZVB7q8/preview" 
+                                allow="autoplay" 
+                                allowfullscreen 
+                                title="Tutorial Estudiantes USEI Oficial"></iframe>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h3 class="h5 fw-bold text-ucb-blue mb-2">Pasos clave para el Estudiante:</h3>
+                        <ul class="list-unstyled text-secondary small mb-4 flex-grow-1">
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>1. Primer Acceso:</strong> Ingresa con tu correo institucional y tu contraseña temporal (<code>Ucb.{TuCodigoEstudiante}!</code>).</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>2. Cambio de Clave:</strong> Por seguridad, define tu contraseña definitiva en el primer inicio.</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>3. Vinculación:</strong> En tu panel, selecciona tu empresa, tutor institucional y docente guía.</span>
+                            </li>
+                        </ul>
+                        <div class="pt-2 border-top">
+                            <a href="https://drive.google.com/file/d/1lEK_lHgEPED5tZicb2ypnC579MZVB7q8/view?usp=sharing" 
+                               target="_blank" 
+                               class="btn btn-outline-primary btn-sm w-100 fw-semibold">
+                                <i class="fas fa-external-link-alt me-1"></i> Abrir en Google Drive
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial Tutores Institucionales -->
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden tutorial-card">
+                    <div class="card-header bg-dark-blue text-white py-3 px-4 d-flex align-items-center justify-content-between" style="background-color: var(--ucb-dark-blue, #002244);">
+                        <span class="fw-bold"><i class="fas fa-briefcase me-2 text-warning"></i> Tutorial para Tutores de Empresa</span>
+                        <span class="badge bg-light text-dark rounded-pill">Guía Oficial</span>
+                    </div>
+                    <div class="ratio ratio-16x9 bg-dark">
+                        <iframe src="https://drive.google.com/file/d/1Lh83LfyZ_Yrdk6Qt5EU8KpD-_tuz58mp/preview" 
+                                allow="autoplay" 
+                                allowfullscreen 
+                                title="Tutorial Tutores Institucionales"></iframe>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h3 class="h5 fw-bold text-ucb-blue mb-2">Pasos para el Tutor Institucional:</h3>
+                        <ul class="list-unstyled text-secondary small mb-4 flex-grow-1">
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>1. Acceso a Plataforma:</strong> Utiliza el correo corporativo registrado y tu clave provisional (<code>Ucb.2026!</code>).</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>2. Cambio Obligatorio:</strong> Establece tu contraseña privada personal al ingresar.</span>
+                            </li>
+                            <li class="mb-2 d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span><strong>3. Evaluación (Formulario B):</strong> Al finalizar la práctica, califica el desempeño y competencias del estudiante.</span>
+                            </li>
+                        </ul>
+                        <div class="pt-2 border-top">
+                            <a href="https://drive.google.com/file/d/1Lh83LfyZ_Yrdk6Qt5EU8KpD-_tuz58mp/view?usp=sharing" 
+                               target="_blank" 
+                               class="btn btn-outline-primary btn-sm w-100 fw-semibold">
+                                <i class="fas fa-external-link-alt me-1"></i> Abrir en Google Drive
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informative FAQ Cards -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="h3 fw-bold text-ucb-blue">
+                <i class="fas fa-question-circle me-2 text-warning"></i> Preguntas Frecuentes de Acceso
+            </h2>
+            <p class="text-muted">Respuestas rápidas para resolver inconvenientes habituales de ingreso</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center text-primary mb-3" style="width: 50px; height: 50px;">
+                        <i class="fas fa-key fs-4"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-ucb-blue">¿Cuál es mi contraseña inicial?</h3>
+                    <p class="text-muted small mb-0">
+                        • <strong>Estudiantes:</strong> <code>Ucb.{TuCodigoEstudiante}!</code> (Ej: si tu código es 1234567, tu clave es <code>Ucb.1234567!</code>).<br>
+                        • <strong>Docentes y Tutores de Empresa:</strong> <code>Ucb.2026!</code>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center text-primary mb-3" style="width: 50px; height: 50px;">
+                        <i class="fas fa-shield-alt fs-4"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-ucb-blue">¿Por qué no funciona mi clave del SIAAN?</h3>
+                    <p class="text-muted small mb-0">
+                        El SGPP es una plataforma especializada e independiente. No utiliza la contraseña de SIAAN ni Neo LMS. Debes ingresar con tu correo institucional y la clave provisional indicada.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4">
+                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center text-primary mb-3" style="width: 50px; height: 50px;">
+                        <i class="fas fa-clipboard-check fs-4"></i>
+                    </div>
+                    <h3 class="h5 fw-bold text-ucb-blue">¿Cuándo se realiza la evaluación?</h3>
+                    <p class="text-muted small mb-0">
+                        La plataforma técnica no bloquea la fecha: tu tutor institucional puede evaluarte tan pronto como concluyas tus horas de pasantía, siempre que te hayas vinculado previamente a su perfil.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Support Banner -->
+    <div class="card border-0 rounded-4 shadow-sm text-white overflow-hidden" style="background: linear-gradient(135deg, var(--ucb-blue, #003366) 0%, var(--ucb-dark-blue, #002244) 100%);">
+        <div class="card-body p-4 p-md-5 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
+            <div>
+                <h3 class="h4 fw-bold mb-2 text-warning"><i class="fas fa-headset me-2"></i> ¿Necesitas orientación o soporte?</h3>
+                <p class="mb-0 text-light opacity-75">
+                    Comunícate con la Unidad de Servicios a Estudiantes (USEI) - Sede La Paz para dudas sobre convenios, periodos académicos o habilitación de cuentas.
+                </p>
+            </div>
+            <div class="text-nowrap">
+                <a href="/Account/Login" class="btn btn-warning btn-lg fw-bold text-dark px-4 shadow-sm">
+                    Ingresar al Sistema <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .tracking-wide {
+        letter-spacing: 1px;
+    }
+    .text-ucb-blue {
+        color: var(--ucb-blue, #003366);
+    }
+    .bg-ucb-blue {
+        background-color: var(--ucb-blue, #003366) !important;
+    }
+    .tutorial-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .tutorial-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 51, 102, 0.12) !important;
+    }
+    .drop-shadow {
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+</style>
