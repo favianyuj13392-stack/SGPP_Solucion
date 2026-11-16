@@ -70,29 +70,51 @@ public class EditModel : PageModel
 
         if (estudiante == null) return NotFound();
 
-        // Update User Info
-        estudiante.ApplicationUser.Nombre = Input.Nombre;
-        estudiante.ApplicationUser.Apellido = Input.Apellido;
-        estudiante.ApplicationUser.EsActivo = Input.EsActivo;
-        
-        // Update Email (Handle UserName too)
-        if (estudiante.ApplicationUser.Email != Input.Email)
+        string emailClean = (Input.Email ?? "").Trim().ToLower();
+        if (string.IsNullOrWhiteSpace(emailClean))
         {
-             estudiante.ApplicationUser.Email = Input.Email;
-             estudiante.ApplicationUser.UserName = Input.Email;
-             estudiante.EmailInstitucional = Input.Email;
-             await _userManager.UpdateNormalizedEmailAsync(estudiante.ApplicationUser);
-             await _userManager.UpdateNormalizedUserNameAsync(estudiante.ApplicationUser);
+            ModelState.AddModelError("Input.Email", "El correo electrónico institucional es requerido.");
+            return Page();
         }
 
+        // Validar si el correo cambió y si ya pertenece a otro usuario en el sistema
+        if (!string.Equals(estudiante.ApplicationUser.Email, emailClean, StringComparison.OrdinalIgnoreCase))
+        {
+            var existingUser = await _userManager.FindByEmailAsync(emailClean);
+            if (existingUser != null && existingUser.Id != estudiante.ApplicationUserId)
+            {
+                ModelState.AddModelError("Input.Email", $"El correo '{emailClean}' ya se encuentra registrado por el usuario {existingUser.Nombre} {existingUser.Apellido} en el sistema.");
+                return Page();
+            }
+
+            estudiante.ApplicationUser.Email = emailClean;
+            estudiante.ApplicationUser.UserName = emailClean;
+            estudiante.EmailInstitucional = emailClean;
+            await _userManager.UpdateNormalizedEmailAsync(estudiante.ApplicationUser);
+            await _userManager.UpdateNormalizedUserNameAsync(estudiante.ApplicationUser);
+        }
+
+        // Update User Info
+        estudiante.ApplicationUser.Nombre = Input.Nombre?.Trim() ?? "";
+        estudiante.ApplicationUser.Apellido = Input.Apellido?.Trim() ?? "";
+        estudiante.ApplicationUser.EsActivo = Input.EsActivo;
+
         // Update Student Info
-        estudiante.CodigoEstudiante = Input.CodigoEstudiante;
+        estudiante.CodigoEstudiante = Input.CodigoEstudiante?.Trim() ?? "";
         estudiante.Carrera = Input.Carrera;
 
-        await _context.SaveChangesAsync();
-        await _userManager.UpdateAsync(estudiante.ApplicationUser);
-
-        return RedirectToPage("./Index");
+        try
+        {
+            await _context.SaveChangesAsync();
+            await _userManager.UpdateAsync(estudiante.ApplicationUser);
+            TempData["Message"] = "Datos del estudiante actualizados correctamente.";
+            return RedirectToPage("./Index");
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError(string.Empty, "Error al guardar los cambios en la base de datos. Verifique que no existan datos duplicados.");
+            return Page();
+        }
     }
 
     public async Task<IActionResult> OnPostResetPasswordAsync()

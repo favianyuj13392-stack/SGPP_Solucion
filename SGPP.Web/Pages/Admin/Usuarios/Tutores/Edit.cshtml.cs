@@ -79,29 +79,55 @@ public class EditModel : PageModel
 
         if (tutor == null) return NotFound();
 
-        // Update User
-        tutor.ApplicationUser.Nombre = Input.Nombre;
-        tutor.ApplicationUser.Apellido = Input.Apellido;
-        tutor.ApplicationUser.EsActivo = Input.EsActivo;
-
-        if (tutor.ApplicationUser.Email != Input.Email)
+        string emailClean = (Input.Email ?? "").Trim().ToLower();
+        if (string.IsNullOrWhiteSpace(emailClean))
         {
-            tutor.ApplicationUser.Email = Input.Email;
-            tutor.ApplicationUser.UserName = Input.Email;
+            ModelState.AddModelError("Input.Email", "El correo electrónico es requerido.");
+            CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
+            return Page();
+        }
+
+        // Validar si el correo cambió y si ya pertenece a otro usuario en el sistema
+        if (!string.Equals(tutor.ApplicationUser.Email, emailClean, StringComparison.OrdinalIgnoreCase))
+        {
+            var existingUser = await _userManager.FindByEmailAsync(emailClean);
+            if (existingUser != null && existingUser.Id != tutor.ApplicationUserId)
+            {
+                ModelState.AddModelError("Input.Email", $"El correo '{emailClean}' ya se encuentra registrado por el usuario {existingUser.Nombre} {existingUser.Apellido} en el sistema.");
+                CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
+                return Page();
+            }
+
+            tutor.ApplicationUser.Email = emailClean;
+            tutor.ApplicationUser.UserName = emailClean;
             await _userManager.UpdateNormalizedEmailAsync(tutor.ApplicationUser);
             await _userManager.UpdateNormalizedUserNameAsync(tutor.ApplicationUser);
         }
 
+        // Update User
+        tutor.ApplicationUser.Nombre = Input.Nombre?.Trim() ?? "";
+        tutor.ApplicationUser.Apellido = Input.Apellido?.Trim() ?? "";
+        tutor.ApplicationUser.EsActivo = Input.EsActivo;
+
         // Update Tutor
         tutor.CentroPracticaId = Input.CentroPracticaId;
-        tutor.Cargo = Input.Cargo;
-        tutor.TelefonoContacto = Input.Telefono;
-        tutor.Ci = Input.Ci;
+        tutor.Cargo = Input.Cargo?.Trim();
+        tutor.TelefonoContacto = Input.Telefono?.Trim();
+        tutor.Ci = Input.Ci?.Trim();
 
-        await _context.SaveChangesAsync();
-        await _userManager.UpdateAsync(tutor.ApplicationUser);
-
-        return RedirectToPage("./Index");
+        try
+        {
+            await _context.SaveChangesAsync();
+            await _userManager.UpdateAsync(tutor.ApplicationUser);
+            TempData["Message"] = "Datos del tutor actualizados correctamente.";
+            return RedirectToPage("./Index");
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError(string.Empty, "Error al guardar los cambios en la base de datos. Verifique que no existan datos duplicados.");
+            CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
+            return Page();
+        }
     }
 
     public async Task<IActionResult> OnPostResetPasswordAsync()
