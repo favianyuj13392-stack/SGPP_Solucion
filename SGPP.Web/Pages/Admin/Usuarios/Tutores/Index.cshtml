@@ -12,47 +12,93 @@
     </ol>
 
     <div class="card mb-4">
+        <div class="card-body bg-light">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" asp-for="SearchTerm" class="form-control" placeholder="Buscar por Nombre, Empresa, Email, CI o Cargo...">
+                </div>
+                <div class="col-md-5">
+                    <select asp-for="CarreraFilter" class="form-select" asp-items="Html.GetEnumSelectList<SGPP.Domain.Enums.Carrera>()">
+                        <option value="">Todas las Carreras</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-info text-white w-100"><i class="fas fa-search"></i> Buscar</button>
+                    @if(!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.CarreraFilter))
+                    {
+                        <a asp-page="./Index" class="btn btn-sm btn-outline-secondary w-100 mt-2">Limpiar</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <span><i class="fas fa-briefcase me-1"></i> Lista de Tutores</span>
+            <span><i class="fas fa-briefcase me-1"></i> Lista de Tutores (@Model.Tutores.Count)</span>
             <a asp-page="./Create" class="btn btn-light btn-sm text-info fw-bold">
                 <i class="fas fa-plus"></i> Nuevo Tutor
             </a>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>Empresa</th>
-                        <th>Cargo</th>
-                        <th>CI</th>
-                        <th>Activo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Tutores)
-                    {
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
                         <tr>
-                            <td>@item.NombreCompleto</td>
-                            <td>@item.Email</td>
-                            <td>@item.Empresa</td>
-                            <td>@item.Cargo</td>
-                            <td>@item.Ci</td>
-                             <td class="text-center">
-                                @if(item.EsActivo) { <span class="badge bg-success">Si</span> } 
-                                else { <span class="badge bg-danger">No</span> }
-                            </td>
-                            <td>
-                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                            </td>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Empresa</th>
+                            <th>Cargo</th>
+                            <th>CI</th>
+                            <th>Carreras Asignadas</th>
+                            <th>Activo</th>
+                            <th>Acciones</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Tutores.Any())
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-1"></i> No se encontraron tutores con los criterios de búsqueda seleccionados.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model.Tutores)
+                        {
+                            <tr>
+                                <td>@item.NombreCompleto</td>
+                                <td>@item.Email</td>
+                                <td><strong>@item.Empresa</strong></td>
+                                <td>@item.Cargo</td>
+                                <td>@item.Ci</td>
+                                <td>
+                                    @if (item.CarrerasAsignadas.Any())
+                                    {
+                                        @foreach (var carrera in item.CarrerasAsignadas)
+                                        {
+                                            <span class="badge bg-primary me-1">@carrera</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Sin practicantes</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if(item.EsActivo) { <span class="badge bg-success">Si</span> } 
+                                    else { <span class="badge bg-danger">No</span> }
+                                </td>
+                                <td>
+                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
