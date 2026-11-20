@@ -140,12 +140,12 @@
                 scales: {
                     x: {
                         title: { display: true, text: 'Trato Estudiante (Form A %)', font: {weight: 'bold'} },
-                        suggestedMin: 0,
+                        suggestedMin: 60,
                         suggestedMax: 100
                     },
                     y: {
                         title: { display: true, text: 'Desempeño Estudiante (Form B %)', font: {weight: 'bold'} },
-                        suggestedMin: 0,
+                        suggestedMin: 60,
                         suggestedMax: 100
                     }
                 },
@@ -192,6 +192,13 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
+                    x: {
+                        ticks: {
+                            font: { size: 10 },
+                            maxRotation: 45,
+                            minRotation: 20
+                        }
+                    },
                     y: {
                         min: 0,
                         max: 100,

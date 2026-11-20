@@ -28,9 +28,14 @@ public class SustainabilityModel : PageModel
 
     public async Task OnGetAsync()
     {
-        // 1. Data for Companies (Top 10 by Volume)
+        // 1. Data for Companies (Top 10 by Volume - Excluyendo datos mock de prueba)
         var companiesData = await _context.Asignaciones
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
+            .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
+            .Where(a => a.TutorInstitucional != null 
+                     && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .GroupBy(a => a.TutorInstitucional.CentroPractica.RazonSocial)
             .Select(g => new
             {
@@ -44,27 +49,22 @@ public class SustainabilityModel : PageModel
         CompanyChart.Labels = companiesData.Select(x => x.Empresa).ToList();
         CompanyChart.Values = companiesData.Select(x => (double)x.Count).ToList();
 
-        // 2. Data for Areas
-        // Handle null AreaTrabajo with "SIN DEFINIR"
-        var areasData = await _context.TutoresInstitucionales
-            .GroupBy(t => t.AreaTrabajo ?? "SIN DEFINIR") // Grouping directly on Tutors might be more accurate for "Capacity" but Request asked based on "Asignaciones" implication?
-                                                          // Request said: "Agrupa las Asignaciones por TutorInstitucional.AreaTrabajo."
-                                                          // Let's stick to Asignaciones to count STUDENTS in those areas.
-            .Select(g => new { Area = g.Key, Count = 0 }) // Dummy for now, let's switch to Asignaciones query below
-            .ToListAsync(); 
-        
-        // Correct Query for Areas based on Assignments
+        // 2. Data for Areas based on Assignments (Excluyendo datos mock)
         var assignmentsByArea = await _context.Asignaciones
             .Include(a => a.TutorInstitucional)
+            .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
+            .Where(a => a.TutorInstitucional != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .GroupBy(a => a.TutorInstitucional.AreaTrabajo)
             .Select(g => new 
             {
-                Area = g.Key == null ? "SIN DEFINIR" : g.Key.ToUpper(),
+                Area = string.IsNullOrWhiteSpace(g.Key) ? "SIN DEFINIR" : g.Key.Trim().ToUpper(),
                 Count = g.Count()
             })
             .ToListAsync();
             
-        // Post-processing in memory for GroupBy logic on normalized string if DB doesn't support ToUpper in GroupBy key easily in all providers (SQL Server does, but let's be safe)
+        // Agrupar y normalizar en memoria
         var areaGrouped = assignmentsByArea
             .GroupBy(x => x.Area)
             .Select(g => new 
@@ -75,8 +75,16 @@ public class SustainabilityModel : PageModel
             .OrderByDescending(x => x.Count)
             .ToList();
 
-        AreaChart.Labels = areaGrouped.Select(x => x.Area).ToList();
-        AreaChart.Values = areaGrouped.Select(x => (double)x.Count).ToList();
+        // Para presentación ejecutiva: Top 6 áreas principales + "OTRAS ÁREAS"
+        var topAreas = areaGrouped.Take(6).ToList();
+        var remainingCount = areaGrouped.Skip(6).Sum(x => x.Count);
+        if (remainingCount > 0)
+        {
+            topAreas.Add(new { Area = "OTRAS ÁREAS", Count = remainingCount });
+        }
+
+        AreaChart.Labels = topAreas.Select(x => x.Area).ToList();
+        AreaChart.Values = topAreas.Select(x => (double)x.Count).ToList();
     }
 
     public async Task<IActionResult> OnPostExportAsync()
@@ -92,11 +100,16 @@ public class SustainabilityModel : PageModel
         worksheet1.Cell(1, 3).Value = "Estudiantes Activos";
         worksheet1.Cell(1, 4).Value = "Promedio Satisfacción (0-36)";
 
-        // Data Fetch
+        // Data Fetch (Excluyendo mock)
         var companyStats = await _context.Asignaciones
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
             .Include(a => a.FormularioA)
             .Include(a => a.Periodo)
+            .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
+            .Where(a => a.TutorInstitucional != null 
+                     && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .GroupBy(a => a.TutorInstitucional.CentroPractica.RazonSocial)
             .Select(g => new
             {

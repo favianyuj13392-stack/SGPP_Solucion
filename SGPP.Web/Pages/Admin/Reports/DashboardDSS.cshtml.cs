@@ -59,14 +59,17 @@ public class DashboardDSSModel : PageModel
 
     public async Task OnGetAsync()
     {
-        // Traer todas las asignaciones validadas con ambos formularios
+        // Traer todas las asignaciones validadas con ambos formularios (Excluyendo datos mock de prueba)
         var validAssignments = await _context.Asignaciones
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
             .Include(a => a.FormularioA)
             .Include(a => a.FormularioB)
-            .Include(a => a.Estudiante)
+            .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
             .Include(a => a.Periodo)
-            .Where(a => a.FormularioA != null && a.FormularioB != null)
+            .Where(a => a.FormularioA != null && a.FormularioB != null
+                     && a.TutorInstitucional != null && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .ToListAsync();
 
         if (validAssignments.Any())
@@ -90,10 +93,10 @@ public class DashboardDSSModel : PageModel
             })
             .ToList();
 
-        // --- KPI 2: Brechas Curriculares ---
+        // --- KPI 2: Brechas Curriculares con Nombres Legibles de Carrera ---
         BrechaMetrics = validAssignments
             .Where(a => a.Estudiante != null)
-            .GroupBy(a => a.Estudiante!.Carrera.ToString())
+            .GroupBy(a => GetCarreraNombreCorto(a.Estudiante!.Carrera))
             .Select(g => new BrechaCurricularMetric
             {
                 Carrera = g.Key,
@@ -102,48 +105,76 @@ public class DashboardDSSModel : PageModel
             })
             .ToList();
 
-        // --- KPI 4: Tendencias de Calidad ---
+        // --- KPI 4: Tendencias de Calidad (ORDEN CRONOLÓGICO REAL) ---
         TendenciaMetrics = validAssignments
             .Where(a => a.Periodo != null && !string.IsNullOrEmpty(a.Periodo.CodigoGestion))
-            .GroupBy(a => a.Periodo!.CodigoGestion)
-            .AsEnumerable()
-            .Select(g => {
-                string rawCodigo = g.Key;
-                string cleanPeriodo = rawCodigo;
-                var match = System.Text.RegularExpressions.Regex.Match(rawCodigo, @"^(I{1,2}-\d{4})");
-                if (match.Success) 
-                {
-                    cleanPeriodo = match.Groups[1].Value;
-                }
-                
-                return new TendenciaCalidadMetric
-                {
-                    Periodo = cleanPeriodo,
-                    PromedioA_Pct = Math.Min(100.0, g.Average(a => (a.FormularioA!.ScoreCentroBruto / 36.0) * 100.0)),
-                    PromedioB_Pct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0)) / 2.0))
-                };
+            .GroupBy(a => new { a.PeriodoId, Codigo = a.Periodo!.CodigoGestion, a.Periodo.FechaInicio })
+            .OrderBy(g => g.Key.FechaInicio)
+            .Select(g => new TendenciaCalidadMetric
+            {
+                Periodo = g.Key.Codigo,
+                PromedioA_Pct = Math.Min(100.0, g.Average(a => (a.FormularioA!.ScoreCentroBruto / 36.0) * 100.0)),
+                PromedioB_Pct = Math.Min(100.0, g.Average(a => (((a.FormularioB!.ScoreTecnicoBruto / 64.0) * 100.0) + ((a.FormularioB!.ScorePowerSkillsBruto / 36.0) * 100.0)) / 2.0))
             })
-            .OrderBy(t => t.Periodo)
             .ToList();
 
-        // --- KPI 3: Distribución de Empleabilidad ---
-        // Se usa todo el universo de asignaciones con tutores y áreas definidas para reflejar inserción, 
-        // indistinto de si terminaron la evaluación o no.
+        // --- KPI 3: Distribución de Empleabilidad (Excluyendo mock y normalizando áreas) ---
         var allAssignments = await _context.Asignaciones
-            .Include(a => a.Estudiante)
-            .Include(a => a.TutorInstitucional)
-            .Where(a => a.TutorInstitucional != null && a.TutorInstitucional.AreaTrabajo != null && a.Estudiante != null)
+            .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
+            .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
+            .Where(a => a.TutorInstitucional != null 
+                     && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && a.TutorInstitucional.AreaTrabajo != null 
+                     && a.Estudiante != null
+                     && (a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .ToListAsync();
 
         EmpleabilidadMetrics = allAssignments
-            .GroupBy(a => new { Carrera = a.Estudiante!.Carrera.ToString(), Area = a.TutorInstitucional!.AreaTrabajo })
+            .GroupBy(a => new { 
+                Carrera = GetCarreraNombreCorto(a.Estudiante!.Carrera), 
+                Area = a.TutorInstitucional!.AreaTrabajo!.Trim().ToUpper() 
+            })
             .Select(g => new EmpleabilidadMetric
             {
                 Carrera = g.Key.Carrera,
-                AreaTrabajo = g.Key.Area!,
+                AreaTrabajo = g.Key.Area,
                 Count = g.Count()
             })
             .ToList();
+    }
+
+    private static string GetCarreraNombreCorto(SGPP.Domain.Enums.Carrera carrera)
+    {
+        return carrera switch
+        {
+            SGPP.Domain.Enums.Carrera.SIS => "Ing. Sistemas",
+            SGPP.Domain.Enums.Carrera.IND => "Ing. Industrial",
+            SGPP.Domain.Enums.Carrera.CIV => "Ing. Civil",
+            SGPP.Domain.Enums.Carrera.TEL => "Ing. Telecom",
+            SGPP.Domain.Enums.Carrera.INB => "Ing. Biomédica",
+            SGPP.Domain.Enums.Carrera.IAM => "Ing. Ambiental",
+            SGPP.Domain.Enums.Carrera.IBB => "Ing. Bioquímica",
+            SGPP.Domain.Enums.Carrera.ADM => "Admin. Empresas",
+            SGPP.Domain.Enums.Carrera.ADT => "Admin. Turística",
+            SGPP.Domain.Enums.Carrera.ICO => "Ing. Comercial",
+            SGPP.Domain.Enums.Carrera.MKD => "Marketing",
+            SGPP.Domain.Enums.Carrera.COM => "Comunicación",
+            SGPP.Domain.Enums.Carrera.CDM => "Com. Digital",
+            SGPP.Domain.Enums.Carrera.DGR => "Diseño Gráfico",
+            SGPP.Domain.Enums.Carrera.DIG => "Diseño Digital",
+            SGPP.Domain.Enums.Carrera.PSI => "Psicología",
+            SGPP.Domain.Enums.Carrera.CPO => "Ciencias Políticas",
+            SGPP.Domain.Enums.Carrera.CPA => "Contaduría",
+            SGPP.Domain.Enums.Carrera.DER => "Derecho",
+            SGPP.Domain.Enums.Carrera.ARQ => "Arquitectura",
+            SGPP.Domain.Enums.Carrera.EIN => "Econ. e Intel. Negocios",
+            SGPP.Domain.Enums.Carrera.ECO => "Economía",
+            SGPP.Domain.Enums.Carrera.IIE => "Innovación Empresarial",
+            SGPP.Domain.Enums.Carrera.IGL => "Logística Suministros",
+            SGPP.Domain.Enums.Carrera.IMU => "Multimedia",
+            _ => carrera.ToString()
+        };
     }
 
     public async Task<IActionResult> OnPostExportAsync()
