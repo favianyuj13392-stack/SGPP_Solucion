@@ -28,6 +28,10 @@ public class DashboardDSSModel : PageModel
     public double Resumen_FormAPct { get; set; }
     public double Resumen_FormBPct { get; set; }
 
+    public int TotalPracticantes { get; set; }
+    public int TotalEmpresas { get; set; }
+    public double TotalHoras { get; set; }
+
     public class ConvenioHealthMetric
     {
         public string Empresa { get; set; } = string.Empty;
@@ -59,6 +63,35 @@ public class DashboardDSSModel : PageModel
 
     public async Task OnGetAsync()
     {
+        // 0. Métricas Macro Ejecutivas (Periodo Activo, sin mocks)
+        TotalPracticantes = await _context.Asignaciones
+            .Where(a => a.Periodo.Activo 
+                     && a.TutorInstitucional != null 
+                     && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
+            .CountAsync();
+
+        TotalEmpresas = await _context.Asignaciones
+            .Where(a => a.Periodo.Activo 
+                     && a.TutorInstitucional != null 
+                     && a.TutorInstitucional.CentroPractica != null
+                     && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
+                     && (a.Estudiante == null || a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
+            .Select(a => a.TutorInstitucional.CentroPracticaId)
+            .Distinct()
+            .CountAsync();
+
+        var horasDb = (double)(await _context.EvaluacionesEmpresa
+            .Where(f => f.Asignacion.Periodo.Activo 
+                     && (f.Asignacion.TutorInstitucional == null 
+                         || f.Asignacion.TutorInstitucional.CentroPractica == null 
+                         || f.Asignacion.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"))
+            .SumAsync(f => (decimal?)f.HorasTrabajadas) ?? 0m);
+
+        // Si las evaluaciones están en curso, proyectar con la carga oficial de 160 hrs por practicante
+        TotalHoras = horasDb > 0 ? horasDb : (TotalPracticantes * 160.0);
+
         // Traer todas las asignaciones validadas con ambos formularios (Excluyendo datos mock de prueba)
         var validAssignments = await _context.Asignaciones
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
@@ -118,14 +151,13 @@ public class DashboardDSSModel : PageModel
             })
             .ToList();
 
-        // --- KPI 3: Distribución de Empleabilidad (Excluyendo mock y normalizando áreas) ---
+        // --- KPI 3: Distribución de Empleabilidad (Macro-áreas canónicas y sin mock) ---
         var allAssignments = await _context.Asignaciones
             .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
             .Where(a => a.TutorInstitucional != null 
                      && a.TutorInstitucional.CentroPractica != null
                      && a.TutorInstitucional.CentroPractica.RazonSocial != "SoftCorp SRL"
-                     && a.TutorInstitucional.AreaTrabajo != null 
                      && a.Estudiante != null
                      && (a.Estudiante.ApplicationUser.Email == null || !a.Estudiante.ApplicationUser.Email.Contains("test")))
             .ToListAsync();
@@ -133,7 +165,7 @@ public class DashboardDSSModel : PageModel
         EmpleabilidadMetrics = allAssignments
             .GroupBy(a => new { 
                 Carrera = GetCarreraNombreCorto(a.Estudiante!.Carrera), 
-                Area = a.TutorInstitucional!.AreaTrabajo!.Trim().ToUpper() 
+                Area = SustainabilityModel.GetMacroArea(a.TutorInstitucional?.AreaTrabajo, a.Estudiante?.Carrera)
             })
             .Select(g => new EmpleabilidadMetric
             {

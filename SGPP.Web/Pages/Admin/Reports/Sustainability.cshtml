@@ -40,7 +40,7 @@
     <div class="col-lg-6">
         <div class="card shadow-sm mb-4 border-0 h-100">
             <div class="card-header py-3" style="background-color: #003366; color: white;">
-                <h6 class="m-0 fw-bold"><i class="fas fa-chart-pie me-2"></i>Distribución por Macro-Áreas de Trabajo</h6>
+                <h6 class="m-0 fw-bold"><i class="fas fa-chart-pie me-2"></i>Distribución por Sectores Laborales y Áreas</h6>
             </div>
             <div class="card-body">
                 <div style="height: 380px; position: relative;">
@@ -115,8 +115,11 @@
         });
 
         // Chart 2: Areas (Executive Doughnut)
-        // Palette: UCB Blue, UCB Gold, Teal, Royal Blue, Orange, Purple, Slate Gray
-        const executivePalette = ['#003366', '#FFCC00', '#20c997', '#0d6efd', '#fd7e14', '#6f42c1', '#6c757d'];
+        // Palette: UCB Blue, UCB Gold, Teal, Royal Blue, Orange, Purple, Pink, Forest Green, Cyan, Slate Gray
+        const executivePalette = [
+            '#003366', '#FFCC00', '#20c997', '#0d6efd', '#fd7e14', 
+            '#6f42c1', '#e83e8c', '#198754', '#17a2b8', '#6c757d'
+        ];
         const totalAreaStudents = areaValues.reduce((a, b) => a + b, 0);
 
         const ctxAreas = document.getElementById('areasChart').getContext('2d');
