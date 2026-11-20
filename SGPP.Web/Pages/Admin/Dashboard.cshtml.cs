@@ -21,7 +21,7 @@ public class DashboardModel : PageModel
 
     public async Task OnGetAsync()
     {
-        ActivePeriod = await _context.Periodos.FirstOrDefaultAsync(p => p.Activo);
+        ActivePeriod = await _context.Periodos.Where(p => p.Activo).OrderByDescending(p => p.Id).FirstOrDefaultAsync();
     }
 
     public async Task<IActionResult> OnPostTogglePeriodAsync(int id)

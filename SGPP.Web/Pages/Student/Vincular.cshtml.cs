@@ -43,8 +43,11 @@ public class VincularModel : PageModel
         var estudiante = await _context.Estudiantes.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
         if (estudiante == null) return Forbid(); // Should not happen for role Estudiante
 
-        // 1. Check if there is an ACTIVE period
-        var activePeriod = await _context.Periodos.FirstOrDefaultAsync(p => p.Activo);
+        // 1. Check if there is an ACTIVE period (latest active)
+        var activePeriod = await _context.Periodos
+            .Where(p => p.Activo)
+            .OrderByDescending(p => p.Id)
+            .FirstOrDefaultAsync();
         
         // If there is an active period, check if the student ALREADY has an assignment for IT
         if (activePeriod != null)
@@ -102,9 +105,11 @@ public class VincularModel : PageModel
              return await ReloadPageOnError();
         }
 
-        // 1. Obtener Periodo Activo (ESTRICTO)
+        // 1. Obtener Periodo Activo (ESTRICTO - último activo)
         var periodo = await _context.Periodos
-            .FirstOrDefaultAsync(p => p.Activo);
+            .Where(p => p.Activo)
+            .OrderByDescending(p => p.Id)
+            .FirstOrDefaultAsync();
 
         if (periodo == null)
         {

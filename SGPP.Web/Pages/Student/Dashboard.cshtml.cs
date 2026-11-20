@@ -44,7 +44,7 @@ public class DashboardModel : PageModel
         if (user == null) return Challenge();
 
         // 1. Obtener Periodo Activo Global (para info o vincular)
-        ActivePeriod = await _context.Periodos.FirstOrDefaultAsync(p => p.Activo);
+        ActivePeriod = await _context.Periodos.Where(p => p.Activo).OrderByDescending(p => p.Id).FirstOrDefaultAsync();
 
         // 2. Buscar perfil de estudiante
         var estudianteProfile = await _context.Estudiantes

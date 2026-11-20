@@ -67,7 +67,7 @@ public class EditModel : PageModel
             EsActivo = tutor.ApplicationUser.EsActivo
         };
 
-        CentrosPractica = new SelectList(await _context.CentrosPractica.ToListAsync(), "Id", "RazonSocial");
+        CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
         return Page();
     }
 

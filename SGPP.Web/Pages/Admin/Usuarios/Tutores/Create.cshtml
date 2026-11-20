@@ -42,7 +42,11 @@
                 <h5 class="text-secondary mt-3">Información Laboral</h5>
                 <div class="mb-3">
                     <label asp-for="Input.CentroPracticaId" class="form-label">Empresa / Centro de Práctica</label>
-                    <select asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica">
+                    <div class="input-group mb-1">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="filtroEmpresa" class="form-control" placeholder="Escriba para filtrar empresas..." autocomplete="off" />
+                    </div>
+                    <select id="centroSelect" asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica">
                         <option value="">-- Seleccione una Empresa --</option>
                     </select>
                 </div>
@@ -76,4 +80,14 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $('#filtroEmpresa').on('keyup input', function () {
+            var query = $(this).val().toLowerCase();
+            $('#centroSelect option').each(function () {
+                if (!this.value) return;
+                var match = $(this).text().toLowerCase().indexOf(query) > -1;
+                $(this).toggle(match);
+            });
+        });
+    </script>
 }

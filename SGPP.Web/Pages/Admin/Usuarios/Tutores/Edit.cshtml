@@ -45,7 +45,11 @@
 
                         <div class="mb-3">
                             <label asp-for="Input.CentroPracticaId" class="form-label">Empresa</label>
-                            <select asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica"></select>
+                            <div class="input-group mb-1">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="filtroEmpresaEdit" class="form-control" placeholder="Escriba para filtrar empresas..." autocomplete="off" />
+                            </div>
+                            <select id="centroSelectEdit" asp-for="Input.CentroPracticaId" class="form-select" asp-items="Model.CentrosPractica"></select>
                         </div>
 
                         <div class="row mb-3">
@@ -103,4 +107,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $('#filtroEmpresaEdit').on('keyup input', function () {
+            var query = $(this).val().toLowerCase();
+            $('#centroSelectEdit option').each(function () {
+                var match = $(this).text().toLowerCase().indexOf(query) > -1;
+                $(this).toggle(match);
+            });
+        });
+    </script>
 }

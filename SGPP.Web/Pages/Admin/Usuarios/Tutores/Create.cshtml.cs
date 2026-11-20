@@ -41,14 +41,14 @@ public class CreateModel : PageModel
 
     public async Task OnGetAsync()
     {
-        CentrosPractica = new SelectList(await _context.CentrosPractica.ToListAsync(), "Id", "RazonSocial");
+        CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
-             CentrosPractica = new SelectList(await _context.CentrosPractica.ToListAsync(), "Id", "RazonSocial");
+             CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
              return Page();
         }
 
@@ -68,7 +68,7 @@ public class CreateModel : PageModel
         if (!result.Succeeded)
         {
             foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
-            CentrosPractica = new SelectList(await _context.CentrosPractica.ToListAsync(), "Id", "RazonSocial");
+            CentrosPractica = new SelectList(await _context.CentrosPractica.OrderBy(c => c.RazonSocial).ToListAsync(), "Id", "RazonSocial");
             return Page();
         }
 
