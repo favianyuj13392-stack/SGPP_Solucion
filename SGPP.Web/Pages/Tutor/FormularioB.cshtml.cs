@@ -57,6 +57,7 @@ public class FormularioBModel : PageModel
         // Security Check: Assignation must belong to Tutor
         var tutorProfile = await _context.TutoresInstitucionales
             .Include(t => t.CentroPractica)
+            .Include(t => t.ApplicationUser)
             .FirstOrDefaultAsync(t => t.ApplicationUserId == user.Id);
         if (tutorProfile == null) return Forbid();
 
@@ -64,6 +65,8 @@ public class FormularioBModel : PageModel
             .Include(a => a.Estudiante).ThenInclude(e => e.ApplicationUser)
             .Include(a => a.Periodo)
             .Include(a => a.TutorInstitucional).ThenInclude(t => t.CentroPractica)
+            .Include(a => a.TutorInstitucional).ThenInclude(t => t.ApplicationUser)
+            .Include(a => a.TutorAcademico)
             .FirstOrDefaultAsync(a => a.Id == AsignacionId && a.TutorInstitucionalId == tutorProfile.Id);
 
         if (Asignacion == null) return NotFound("Asignación no encontrada o no pertenece a su usuario.");

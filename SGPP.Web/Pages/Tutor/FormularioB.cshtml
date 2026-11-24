@@ -9,56 +9,58 @@
     
     @if (Model.Asignacion != null)
     {
-        <div class="card mb-4 border-2" style="border-color: #004070;">
-            <div class="card-body p-0">
-                <table class="table table-bordered mb-0">
-                    <tbody>
-                        <tr>
-                            <td colspan="4" class="bg-light fw-bold text-uppercase" style="color: #004070;">Profesional en formación: @Model.Asignacion.Estudiante.ApplicationUser.Nombre @Model.Asignacion.Estudiante.ApplicationUser.Apellido</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold" style="width: 25%;">Tutor(a) Académico(a)</td>
-                            <td style="width: 25%;">No Asignado</td>
-                            <td class="fw-bold" style="width: 25%;">Departamento:</td>
-                            <td style="width: 25%;">@(Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial /* Usamos RazonSocial como proxy departamento o vacio */)</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Tutor(a) Institucional:</td>
-                            <td>@Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre @Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido</td>
-                            <td class="fw-bold">Centro de Práctica:</td>
-                            <td>@Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Semestre:</td>
-                            <td>@Model.Asignacion.Periodo.CodigoGestion</td>
-                            <td class="fw-bold">Año:</td>
-                            <td>@DateTime.Now.Year</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">Fecha Inicio:</td>
-                            <td>
-                                <input asp-for="Input.FechaInicioPractica" type="date" class="form-control" value="@Model.Asignacion.Periodo.FechaInicio.ToString("yyyy-MM-dd")" />
-                            </td>
-                            <td class="fw-bold">Fecha Fin:</td>
-                            <td>
-                                <input asp-for="Input.FechaFinPractica" type="date" class="form-control" value="@Model.Asignacion.Periodo.FechaFin.ToString("yyyy-MM-dd")" />
-                            </td>
-                        </tr>
-                         <tr>
-                            <td class="fw-bold">Fecha Evaluación:</td>
-                            <td>
-                                <input asp-for="Input.FechaEvaluacion" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                            </td>
-                            <td class="fw-bold">Horas Trabajadas:</td>
-                            <td>(Ingrese abajo)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <form method="post">
             <input type="hidden" asp-for="AsignacionId" />
+
+            <div class="card mb-4 border-2" style="border-color: #004070;">
+                <div class="card-body p-0">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="bg-light fw-bold text-uppercase" style="color: #004070;">
+                                    Profesional en formación: @(Model.Asignacion.Estudiante?.ApplicationUser != null ? $"{Model.Asignacion.Estudiante.ApplicationUser.Nombre} {Model.Asignacion.Estudiante.ApplicationUser.Apellido}" : "Estudiante")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold" style="width: 25%;">Tutor(a) Académico(a)</td>
+                                <td style="width: 25%;">@(Model.Asignacion.TutorAcademico != null ? $"{Model.Asignacion.TutorAcademico.Nombre} {Model.Asignacion.TutorAcademico.Apellido}" : "No Asignado")</td>
+                                <td class="fw-bold" style="width: 25%;">Departamento / Empresa:</td>
+                                <td style="width: 25%;">@(Model.Asignacion.TutorInstitucional?.CentroPractica?.RazonSocial ?? "No registrado")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Tutor(a) Institucional:</td>
+                                <td>@(Model.Asignacion.TutorInstitucional?.ApplicationUser != null ? $"{Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre} {Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido}" : "No asignado")</td>
+                                <td class="fw-bold">Centro de Práctica:</td>
+                                <td>@(Model.Asignacion.TutorInstitucional?.CentroPractica?.RazonSocial ?? "No registrado")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Semestre:</td>
+                                <td>@(Model.Asignacion.Periodo?.CodigoGestion ?? "Sin periodo")</td>
+                                <td class="fw-bold">Año:</td>
+                                <td>@DateTime.Now.Year</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Fecha Inicio:</td>
+                                <td>
+                                    <input asp-for="Input.FechaInicioPractica" type="date" class="form-control" value="@(Model.Asignacion.Periodo != null ? Model.Asignacion.Periodo.FechaInicio.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))" />
+                                </td>
+                                <td class="fw-bold">Fecha Fin:</td>
+                                <td>
+                                    <input asp-for="Input.FechaFinPractica" type="date" class="form-control" value="@(Model.Asignacion.Periodo != null ? Model.Asignacion.Periodo.FechaFin.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Fecha Evaluación:</td>
+                                <td>
+                                    <input asp-for="Input.FechaEvaluacion" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                </td>
+                                <td class="fw-bold">Horas Trabajadas:</td>
+                                <td>(Ingrese abajo)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
