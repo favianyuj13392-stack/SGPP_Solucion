@@ -59,12 +59,12 @@
             <div class="col-md-5 mb-4">
                 <div class="card shadow-sm h-100 border-primary">
                     <div class="card-header bg-primary text-white">
-                        <i class="fas fa-briefcase"></i> Tu Práctica Actual (@Model.Asignacion.Periodo.CodigoGestion)
+                        <i class="fas fa-briefcase"></i> Tu Práctica Actual (@(Model.Asignacion.Periodo?.CodigoGestion ?? "Periodo"))
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title text-primary">@Model.Asignacion.TutorInstitucional.CentroPractica.RazonSocial</h5>
+                        <h5 class="card-title text-primary">@(Model.Asignacion.TutorInstitucional?.CentroPractica?.RazonSocial ?? "Centro de Práctica")</h5>
                         <p class="text-muted mb-3">
-                            <i class="fas fa-user-tie"></i> Tutor: @Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre @Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido
+                            <i class="fas fa-user-tie"></i> Tutor: @(Model.Asignacion.TutorInstitucional?.ApplicationUser != null ? $"{Model.Asignacion.TutorInstitucional.ApplicationUser.Nombre} {Model.Asignacion.TutorInstitucional.ApplicationUser.Apellido}" : "No asignado")
                         </p>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">

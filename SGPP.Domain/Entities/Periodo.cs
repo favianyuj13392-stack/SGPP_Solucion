@@ -26,7 +26,7 @@ public class Periodo : BaseEntity
         get 
         {
             var now = DateTime.Now;
-            return Activo && now >= FechaInicioEvaluacion && now <= FechaFinEvaluacion;
+            return Activo && now >= FechaInicioEvaluacion.Date && now < FechaFinEvaluacion.Date.AddDays(1);
         }
     }
 
